@@ -1,0 +1,178 @@
+<!-- pages/orderSubmit/orderSubmit.wxml -->
+<wxs src="../../utils/magic.wxs" module="magic" />
+<block wx:if="{{isLogin}}">
+  <view class="container">
+    <!-- 房间信息卡片 -->
+    <view class="room-card">
+      <view class="room-info">
+        <view class="room-name">{{roominfodata.roomName || '一帆风顺(136张)'}}</view>
+        <view class="club-name">GK桌球俱乐部</view>
+      </view>
+      
+      <!-- 预订类型选择 -->
+      <view class="booking-type">
+        <view class="type-item {{bookingType === 'hour' ? 'active' : ''}}" bind:tap="selectBookingType" data-type="hour">
+          小时开台
+        </view>
+        <view class="type-item {{bookingType === 'package' ? 'active' : ''}}" bind:tap="selectBookingType" data-type="package">
+          套餐开台
+        </view>
+      </view>
+      
+      <!-- 时长选择 - 仅在小时开台时显示 -->
+      <view class="duration-select" wx:if="{{bookingType === 'hour'}}">
+        <view class="duration-item {{select_time_index == 0 ? 'active' : ''}}" bind:tap="selectTimeHour" data-index="0" data-hour="2">
+          2小时
+        </view>
+        <view class="duration-item {{select_time_index == 1 ? 'active' : ''}}" bind:tap="selectTimeHour" data-index="1" data-hour="3">
+          3小时
+        </view>
+        <view class="duration-item {{select_time_index == 2 ? 'active' : ''}}" bind:tap="selectTimeHour" data-index="2" data-hour="4">
+          4小时
+        </view>
+        <view class="duration-item {{select_time_index == 99 ? 'active' : ''}}" bind:tap="selectTimeHour" data-index="99" data-hour="99">
+          通宵
+        </view>
+        <view class="duration-item {{select_time_index == 999 ? 'active' : ''}}" bind:tap="otherTime" data-index="999">
+          其他
+        </view>
+      </view>
+      
+      <!-- 时间选择 -->
+      <view class="time-select">
+        <view class="time-inputs">
+        <view class="time-separator time-text">时间</view>
+
+          <view class="time-input {{bookingType === 'hour' ? 'active' : ''}}" bind:tap="setshowSelectHour">
+            {{view_begin_time}}
+            <icon class="iconfont icon-editor" wx:if="{{bookingType === 'hour'}}"></icon>
+          </view>
+          <view class="time-separator">到</view>
+          <view class="time-input disabled">{{view_end_time}}</view>
+        </view>
+      </view>
+      
+      <!-- 时间轴 - 仅在小时开台时显示 -->
+      <view class="timeline" wx:if="{{bookingType === 'hour'}}">
+        <view class="timeline-slots">
+          <view class="time-slot" 
+                wx:for="{{timeHourAllArr}}" 
+                wx:for-item="houritem2" 
+                wx:key="hour"
+                bind:tap="selectTimeSlot"
+                data-hour="{{houritem2.hour}}">
+            <view class="slot-marker {{houritem2.disable ? 'disabled' : ''}} {{houritem2.lowPrice ? 'low-price' : ''}} {{houritem2.highPrice ? 'high-price' : ''}}"></view>
+            <text class="slot-time">{{houritem2.hour}}</text>
+          </view>
+        </view>
+        <view class="timeline-legend">
+          <view class="legend-item">
+            <view class="legend-dot unavailable"></view>
+            <text>不可约</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-dot available"></view>
+            <text>可约时段</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-dot low-price"></view>
+            <text>低价时段</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-dot high-price"></view>
+            <text>高价时段</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 订单详情 -->
+      <view class="order-details">
+        <view class="detail-item">
+          <text class="label">开始时间</text>
+          <text class="value">{{submit_begin_time}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="label">计费时长</text>
+          <text class="value">{{order_hour}}小时</text>
+        </view>
+        <view class="detail-item">
+          <text class="label">小时单价</text>
+          <text class="value">¥{{currentHourPrice}}元</text>
+        </view>
+        <view class="detail-item" wx:if="{{roominfodata.deposit}}">
+          <text class="label">押金</text>
+          <text class="value">¥{{roominfodata.deposit}}元</text>
+        </view>
+        <view class="detail-item" wx:if="{{discountAmount > 0}}">
+          <text class="label">优惠金额</text>
+          <text class="value" style="color: #ff6b6b;">-¥{{discountAmount}}元</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 套餐列表 - 仅在套餐开台时显示 -->
+    <view class="package-list" wx:if="{{bookingType === 'package' && pkgList.length > 0}}">
+      <view class="package-item {{select_pkg_index == index ? 'active' : ''}}" 
+            bind:tap="selectPkgInfo" 
+            data-id="{{item.pkgId}}" 
+            wx:for="{{pkgList}}" 
+            wx:key="pkgList" 
+            data-index="{{index}}" 
+            data-hour="{{item.hours}}">
+        <view class="package-header">
+          <view class="package-name">{{item.pkgName}}</view>
+          <view class="package-price">¥{{item.price}}</view>
+          <view class="package-check" wx:if="{{select_pkg_index == index}}">
+            <icon class="iconfont icon-xuanzhong"></icon>
+          </view>
+        </view>
+        <view class="package-details">
+          <view class="detail-line">
+            <text class="detail-label">可用星期:</text>
+            <text class="detail-value">{{item.enableWeek}}</text>
+          </view>
+          <view class="detail-line">
+            <text class="detail-label">可用时段:</text>
+            <text class="detail-value">{{item.enableTime && item.enableTime.length == 24 ? '0~23' : item.enableTime}}</text>
+          </view>
+          <view class="detail-line">
+            <text class="detail-value" wx:if="{{item.balanceBuy}}">可余额支付</text>
+            <text class="detail-value">节假日可用</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 底部预订栏 -->
+    <view class="booking-bar">
+      <view class="price-info">
+        <view class="total-price">总计 ¥{{pricestring}}<text class="deposit-note" wx:if="{{roominfodata.deposit}}">包含押金{{roominfodata.deposit}}</text></view>
+        <view class="discount-info">共{{order_hour}}小时/已优惠 ¥{{discountAmount}}</view>
+      </view>
+      <button class="book-btn" bind:tap="SubmitOrderInfoData">预订</button>
+    </view>
+  </view>
+</block>
+
+<block wx:else>
+  <view class="containerlogin">
+    <view class="photo">
+      <view class="img">
+        <image src="/logo.png" mode="widthFix" />
+      </view>
+      <view class="name">{{appName}}</view>
+    </view>
+    <button hover-class="button-click" class="loginBtn bg-primary" bindgetphonenumber="phone" open-type="getPhoneNumber">
+      一键登录
+    </button>
+  </view>
+</block>
+
+<van-popup show="{{ showtimefalge }}" position="bottom" custom-style="height: 60%">
+  <van-datetime-picker type="datetime" value="{{currentDate}}" bind:confirm="timeChange" bind:cancel="timeCancel" formatter="{{formatter}}" min-date="{{minDay}}" max-date="{{maxDay}}" min-hour="{{minHour}}"></van-datetime-picker>
+</van-popup>
+
+<!-- 其他时间弹窗 -->
+<van-popup show="{{ show }}" position="bottom">
+  <van-picker show-toolbar columns="{{ other_hour_options }}" bind:confirm="onTimeConfirm" bind:cancel="onTimeCancel" />
+</van-popup>

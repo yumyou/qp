@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanzu.module.member.dal.mysql.roominfo.RoomInfoMapper">
+    <update id="updateStatusById">
+        update member_room_info
+        set status=#{status}
+        where room_id = #{roomId}
+          and deleted = 0
+    </update>
+    <update id="updateStatusByIds">
+        update member_room_info
+        set status=#{status}
+        where room_id in (${roomIds})
+          and deleted = 0
+    </update>
+
+    <!--
+        一般情况下，尽可能使用 Mapper 进行 CRUD 增删改查即可。
+        无法满足的场景，例如说多表关联查询，才使用 XML 编写 SQL。
+        代码生成器暂时只生成 Mapper XML 文件本身，更多推荐 MybatisX 快速开发插件来生成查询。
+        文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
+     -->
+
+    <select id="getRoomList" resultType="com.yanzu.framework.common.core.KeyValue">
+        select r.room_name `key`, r.room_id `value`
+        from member_room_info r
+                 left join member_store_user su ON su.store_id = r.store_id
+        where r.deleted = 0
+          and r.store_id = #{storeId}
+          and su.deleted = 0
+          and su.user_id = #{userId}
+          and su.type in (12, 13)
+        order by sort_id asc
+    </select>
+    <select id="getRoomInfoList"
+            resultType="com.yanzu.module.member.controller.app.store.vo.AppRoomListRespVO">
+        select r.*, device.device_data lockData
+        from member_room_info r
+                 left join member_store_user su ON su.store_id = r.store_id and su.deleted = 0
+                 left join member_device_info device
+                           ON device.room_id = r.room_id and device.type = 5 and device.deleted = 0
+        where r.deleted = 0
+          and su.user_id = #{userId}
+          and su.type in (12, 13)
+          and r.store_id = #{storeId}
+        order by r.sort_id
+
+    </select>
+    <select id="getRoomImgs" resultType="java.lang.String">
+        select image_urls
+        from member_room_info
+        where deleted = 0
+          and room_id = #{roomId}
+
+    </select>
+    <select id="countByStoreIdAndUserId" resultType="java.lang.Integer">
+        select count(1)
+        from member_room_info
+        where deleted = 0
+        <if test="null!=storeId and storeId!=''">
+            and store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} AND type IN (12,13))
+        </if>
+
+    </select>
+    <select id="getRoomListByAdmin" resultType="com.yanzu.framework.common.core.KeyValue">
+        select r.room_name `key`, r.room_id `value`
+        from member_room_info r
+        where r.deleted = 0
+          and r.store_id = #{storeId}
+        order by sort_id asc
+    </select>
+    <select id="getRoomListByStoreId" resultType="com.yanzu.framework.common.core.KeyValue">
+        select r.room_name `key`, r.room_id `value`
+        from member_room_info r
+        where r.deleted = 0
+          and r.store_id = #{storeId}
+        order by sort_id asc
+    </select>
+    <select id="getNameById" resultType="java.lang.String">
+        select room_name from member_room_info  where deleted = 0 and room_id=#{roomId}
+    </select>
+    <select id="getListByIds" resultType="com.yanzu.module.member.controller.app.store.vo.AppRoomListVO">
+        select r.room_id, r.room_name, r.store_id, s.store_name,s.order_webhook
+        from member_room_info r
+        left join member_store_info s ON s.store_id = r.store_id
+        where r.deleted = 0
+        and r.room_id IN
+        <foreach collection="roomIds" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getRoomInfoList2"
+            resultType="com.yanzu.module.member.controller.app.store.vo.AppRoomInfoListRespVO">
+        select s.store_id,
+        s.store_name,
+        s.clear_open_door,
+        r.room_id,
+        r.room_name,
+        r.type,
+        r.status,
+        l.device_data lockData,
+        gateway.device_id gatewayId
+        from member_room_info r
+        left join member_store_info s ON r.store_id = s.store_id
+        left join member_device_info l ON l.room_id = r.room_id and l.type = 5 and l.deleted = 0
+        left join member_device_info gateway
+        ON gateway.room_id = r.room_id and gateway.type = 6 and gateway.deleted = 0
+        where r.deleted = 0 and s.deleted=0
+        and r.store_id IN
+        <foreach collection="storeIds" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="null!=storeId">
+            AND r.store_id=#{storeId}
+        </if>
+        order by r.store_id asc,r.sort_id asc
+
+    </select>
+    <select id="getInfoById" resultType="com.yanzu.module.member.controller.app.store.vo.AppRoomListVO">
+        select r.room_id, r.room_name, r.store_id, s.store_name,s.order_webhook
+        from member_room_info r
+                 left join member_store_info s ON s.store_id = r.store_id
+        where r.deleted = 0
+          and r.room_id =#{roomId}
+
+    </select>
+    <select id="getClassList" resultType="java.lang.Integer">
+        select distinct room_class
+        from member_room_info
+        where deleted = 0
+          and store_id = #{storeId}
+        order by room_class asc
+    </select>
+</mapper>

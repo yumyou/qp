@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanzu.module.member.dal.mysql.storeuser.StoreUserMapper">
+    <update id="deleteClearUser">
+        update member_store_user
+        set deleted=1 where user_id=#{userId} and store_id in
+        <foreach collection="storeIds" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </update>
+    <update id="deleteClearUserAndStoreId">
+        update member_store_user
+        set deleted=1
+        where user_id = #{userId}
+          and store_id = #{storeId}
+
+    </update>
+    <update id="deleteAdminUser">
+        update member_store_user
+        set deleted=1
+        where store_id = #{storeId}
+          and user_id = #{userId}
+    </update>
+
+    <!--
+        一般情况下，尽可能使用 Mapper 进行 CRUD 增删改查即可。
+        无法满足的场景，例如说多表关联查询，才使用 XML 编写 SQL。
+        代码生成器暂时只生成 Mapper XML 文件本身，更多推荐 MybatisX 快速开发插件来生成查询。
+        文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
+     -->
+
+    <select id="getGiftBalanceByUserId" resultType="java.math.BigDecimal">
+        select ifnull(sum(gift_balance), 0)
+        from member_store_user
+        where user_id = #{userId}
+          ANd deleted = 0
+
+    </select>
+    <select id="getGiftBalanceList"
+            resultType="com.yanzu.module.member.controller.app.user.vo.AppGiftBalanceListRespVO">
+        select s.store_name, su.gift_balance, su.balance
+        from member_store_user su
+                 left join member_store_info s on s.store_id = su.store_id
+        where su.user_id = #{userId}
+          and su.deleted = 0
+          and s.deleted = 0
+        order by su.balance desc
+    </select>
+    <select id="checkStorePromission" resultType="java.lang.Integer">
+        select count(1)
+        from member_store_user
+        where deleted = 0
+          and type in (${type})
+          and store_id = #{storeId}
+          and user_id = #{userId}
+    </select>
+    <select id="getByUserIdAndType" resultType="com.yanzu.module.member.dal.dataobject.storeuser.StoreUserDO">
+        select *
+        from member_store_user
+        where deleted = 0
+          and user_id = #{userId}
+          and type = #{type}
+    </select>
+    <select id="getByUserId" resultType="com.yanzu.module.member.dal.dataobject.storeuser.StoreUserDO">
+        select *
+        from member_store_user
+        where deleted = 0
+          and user_id = #{userId}
+
+    </select>
+    <select id="getIdsByUserId" resultType="java.lang.String">
+        select store_id
+        from member_store_user
+        where deleted = 0
+          and user_id = #{userId}
+    </select>
+    <select id="getClearUserPage"
+            resultType="com.yanzu.module.member.controller.app.manager.vo.AppClearUserPageRespVO">
+        select su.id
+             , su.user_id
+             , su.store_id
+             , s.store_name
+             , m.nickname
+             , m.avatar
+             , su.name
+             , m.mobile
+             , su.status
+             , (select ifnull(SUM(money), 0)
+                from member_clear_bill
+                where user_id = su.user_id
+                  and store_id = #{storeId}) as money
+             , (select count(1)
+                from member_clear_info
+                where status = 3
+                  and user_id = su.user_id
+                  and store_id = #{storeId}) as finishCount
+             , (select count(1)
+                from member_clear_info
+                where status = 6
+                  and user_id = su.user_id
+                  and store_id = #{storeId}) as settlementCount
+        from member_store_user su
+                 left join member_user m
+                           ON su.user_id = m.id
+                 left join member_store_info s ON s.store_id = su.store_id
+        where su.store_id in (${storeIds})
+          and su.deleted = 0
+          and su.type = 14
+            <if test="null!=storeId and storeId!=''">
+                AND su.store_id=#{storeId}
+            </if>
+
+
+    </select>
+    <select id="getByUserIdAndStoreId"
+            resultType="com.yanzu.module.member.dal.dataobject.storeuser.StoreUserDO">
+        select *
+        from member_store_user
+        where deleted = 0
+          and user_id = #{userId}
+          and store_id = #{storeId}
+
+    </select>
+    <select id="getAdminUserPage"
+            resultType="com.yanzu.module.member.controller.app.manager.vo.AppAdminUserPageRespVO">
+        select msu.id,
+               msu.user_id,
+               msu.store_id,
+               s.store_name,
+               msu.name,
+               mu.avatar,
+               msu.name,
+               msu.type,
+               REPLACE(mu.mobile, SUBSTRING(mu.mobile, 4, 4), '****') mobile,
+               msu.status
+        from member_store_user msu
+                 left join member_user mu ON msu.user_id = mu.id
+                 left join member_store_info s ON msu.store_id = s.store_id
+        where msu.deleted = 0
+          and mu.deleted = 0
+          and s.deleted = 0
+          and msu.type IN (12,13)
+          and msu.store_id in (${storeIds})
+          <if test="null!=storeId">
+              and msu.store_id = #{storeId}
+          </if>
+        order by msu.id
+
+    </select>
+    <select id="getTotalBalance" resultType="com.yanzu.module.member.dal.dataobject.storeuser.StoreUserDO">
+        select ifnull(sum(msu.balance), 0) balance, ifnull(sum(msu.gift_balance), 0) giftBalance
+        from member_store_user msu
+        left join member_store_info store ON msu.store_id=store.store_id
+        where msu.deleted = 0 and store.deleted=0
+          and msu.user_id = #{userId}
+
+    </select>
+    <select id="getIdsByUserIdAndAdmin" resultType="java.lang.String">
+        select store_id
+        from member_store_user
+        where deleted = 0 and type in (12,13)
+          and user_id = #{userId}
+    </select>
+    <select id="getIdsByEmploy" resultType="java.lang.String">
+        select store_id
+        from member_store_user
+        where deleted = 0 and type in (12,13,14)
+          and user_id = #{userId}
+    </select>
+
+</mapper>

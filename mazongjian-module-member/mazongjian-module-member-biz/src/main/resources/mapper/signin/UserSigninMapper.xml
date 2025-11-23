@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanzu.module.member.dal.mysql.signin.UserSigninMapper">
+
+    <select id="selectByUserIdAndDate" resultType="com.yanzu.module.member.dal.dataobject.signin.UserSigninDO">
+        SELECT * FROM member_user_signin
+        WHERE user_id = #{userId} AND signin_date = #{signinDate} AND deleted = 0
+    </select>
+
+    <select id="selectConsecutiveDaysByUserId" resultType="java.lang.Integer">
+        SELECT consecutive_days FROM member_user_signin
+        WHERE user_id = #{userId} AND deleted = 0
+        ORDER BY signin_date DESC LIMIT 1
+    </select>
+
+</mapper>

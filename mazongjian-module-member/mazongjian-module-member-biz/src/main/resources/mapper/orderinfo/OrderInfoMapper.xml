@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanzu.module.member.dal.mysql.orderinfo.OrderInfoMapper">
+    <update id="updateStatusByIds">
+        update member_order_info
+        set status=#{status}
+        where order_id in (${orderIds})
+          and deleted = 0
+    </update>
+    <update id="changeOrderUser">
+        update member_order_info
+        set user_id=#{userId}
+        where order_id = #{orderId}
+          and deleted = 0
+          and status in (0, 1)
+    </update>
+
+    <!--
+        一般情况下，尽可能使用 Mapper 进行 CRUD 增删改查即可。
+        无法满足的场景，例如说多表关联查询，才使用 XML 编写 SQL。
+        代码生成器暂时只生成 Mapper XML 文件本身，更多推荐 MybatisX 快速开发插件来生成查询。
+        文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
+     -->
+
+    <select id="getByRoomIds" resultType="com.yanzu.module.member.dal.dataobject.orderinfo.OrderInfoDO">
+        select *
+        from member_order_info
+        where deleted = 0
+        and status in (0,1)
+        and end_time>now()
+        and room_id in
+        <foreach collection="roomIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by order_id asc
+    </select>
+    <select id="getByUserAndStatus" resultType="com.yanzu.module.member.dal.dataobject.orderinfo.OrderInfoDO">
+        select *
+        from member_order_info
+        where deleted = 0
+          and user_id = #{userId}
+          and status = #{status}
+
+    </select>
+    <select id="getClearPage" resultType="com.yanzu.module.member.controller.app.clear.vo.AppClearPageRespVO">
+        select
+        c.clear_id,
+        o.order_id,
+        o.order_no,
+        o.store_id,
+        s.store_name,
+        o.room_id,
+        r.room_name,
+        r.type roomType,
+        o.end_time orderEndTime,
+        c.status,
+        c.start_time,
+        c.finish_time
+        from member_clear_info c
+        left join member_store_info s ON s.store_id = c.store_id
+        left join member_order_info o ON c.order_id = o.order_id
+        left join member_room_info r ON r.room_id = o.room_id
+        where c.deleted = 0 and o.status !=3 and c.store_id in (select store_id from member_store_user where
+        user_id=#{reqVO.userId} and type=14 and deleted=0)
+        <if test="null!=reqVO.storeId and reqVO.storeId!=''">
+            and o.store_id=#{reqVO.storeId}
+        </if>
+        <if test="null!=reqVO.startTime and null!=reqVO.endTime">
+            and to_days(o.create_time) >= to_days(#{reqVO.startTime})
+            and to_days(o.create_time) &lt;= to_days(#{reqVO.endTime})
+        </if>
+        <if test="null!=reqVO.status">
+            and c.status=#{reqVO.status}
+            <if test="reqVO.status==0">
+                and ( c.user_id=#{reqVO.userId} or c.user_id is null)
+            </if>
+            <if test="reqVO.status!=0">
+                and c.user_id=#{reqVO.userId}
+            </if>
+        </if>
+        <if test="null==reqVO.status">
+            and ( c.user_id=#{reqVO.userId} or c.user_id is null)
+        </if>
+        order by c.create_time desc
+    </select>
+    <select id="getByRoomId" resultType="com.yanzu.module.member.dal.dataobject.orderinfo.OrderInfoDO">
+        select *
+        from member_order_info
+        where deleted = 0
+        and room_id = #{roomId}
+        and status in (0, 1)
+        and end_time>now()
+        <if test="null!=ignoreOrderId and ignoreOrderId!=''">
+            and order_id!=#{ignoreOrderId}
+        </if>
+        order by start_time asc
+    </select>
+    <select id="getOrderPage" resultType="com.yanzu.module.member.controller.app.order.vo.OrderListRespVO">
+        select o.order_id
+        , o.order_no
+        , s.store_id
+        , s.store_name
+        , r.room_id
+        , r.price
+        , r.type roomType
+        , r.image_urls roomImg
+        , r.room_name
+        , o.user_id
+        , m.nickname
+        , m.mobile
+        , o.start_time as startTime
+        , o.end_time
+        , ROUND(TIMESTAMPDIFF(SECOND, o.start_time,o.end_time) / 3600, 1) AS orderHour
+        , o.pay_price
+        , o.deposit
+        , o.pay_type
+        , coupon.coupon_name
+        , o.refund_price
+        , o.status
+        , o.create_time as createTime
+        from member_order_info o
+        left join member_store_info s ON o.store_id = s.store_id
+        left join member_room_info r ON r.room_id = o.room_id
+        left join member_user m ON m.id = o.user_id
+        left join member_coupon_info coupon ON coupon.coupon_id=o.coupon_id
+        where o.deleted = 0
+          <if test="null!=reqVO">
+              <if test="null==reqVO.storeIds or reqVO.storeIds==''">
+                  and o.user_id=#{reqVO.userId}
+              </if>
+              <if test="null!=reqVO.userId">
+                  and o.user_id=#{reqVO.userId}
+              </if>
+              <if test="null!=reqVO.storeIds and reqVO.storeIds!=''">
+                  and o.store_id in (${reqVO.storeIds})
+              </if>
+              <if test="null!=reqVO.storeId and reqVO.storeId!=''">
+                  and o.store_id=#{reqVO.storeId}
+              </if>
+              <if test="null!=reqVO.status">
+                  and o.status=#{reqVO.status}
+              </if>
+              <if test="null!=reqVO.orderColumn and reqVO.orderColumn!=''">
+                  order by ${reqVO.orderColumn} desc
+              </if>
+              <if test="null==reqVO.orderColumn or reqVO.orderColumn==''">
+                  order by o.order_id desc
+              </if>
+          </if>
+    </select>
+    <select id="getOrderInfo" resultType="com.yanzu.module.member.controller.app.order.vo.OrderInfoAppRespVO">
+        select o.order_id
+        , o.order_no
+        , o.order_key
+        , r.room_name
+        , r.image_urls roomImg
+        , r.price roomPrice
+        , r.work_price workPrice
+        , device.device_data lockData
+        , o.room_id
+        , o.store_id
+        , r.type roomType
+        , s.store_name
+        , s.lat
+        , s.lon
+        , s.address
+        , o.user_id
+        , o.start_time
+        , o.end_time
+        , ROUND(TIMESTAMPDIFF(SECOND, o.start_time,o.end_time) / 3600, 1) AS orderHour
+        , o.price
+        , o.deposit
+        , o.pay_price
+        , o.refund_price
+        , o.pay_type
+        , s.wifi_info
+        , s.wifi_pwd
+        , s.kefu_phone
+        , c.coupon_name
+        , o.status
+        , o.create_time
+        from member_order_info o
+        left join member_store_info s ON o.store_id = s.store_id
+        left join member_room_info r ON r.room_id = o.room_id
+        left join member_user m ON m.id = o.user_id
+        left join member_coupon_info c ON o.coupon_id = c.coupon_id
+        left join member_device_info device ON device.room_id=r.room_id and device.type=5 and device.deleted=0
+        where o.deleted = 0
+        <if test="null != orderId">
+            and o.order_id = #{orderId}
+        </if>
+        <if test="null != orderKey and orderKey!=''">
+            and o.order_key = #{orderKey}
+        </if>
+        <if test="null == orderId and null!= userId">
+            and o.user_id=#{userId}
+            and o.end_time>now()
+            and o.status in (0,1)
+            order by o.create_time DESC
+            limit 1
+        </if>
+    </select>
+
+    <select id="getRevenueStatistics" resultType="com.yanzu.framework.common.core.KeyValue">
+        SELECT
+        `key`,create_time,
+        ifnull( SUM( price ), 0 ) `value`
+        FROM
+        (
+        SELECT
+        DATE_FORMAT( create_time, '%m-%d' ) `key`,create_time,
+        ifnull( sum( group_pay_price ), 0 ) `price`
+        FROM
+        member_group_pay_info
+        WHERE
+        deleted = 0
+        <if test="null!=startTime and null!=endTime">
+            and to_days(create_time) >= to_days(#{startTime})
+            and to_days(create_time) &lt;= to_days(#{endTime})
+        </if>
+        <if test="null!=storeId and storeId!=''">
+            and store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} AND type IN (12,13))
+        </if>
+        GROUP BY
+        DATE_FORMAT( create_time, '%m-%d' ) UNION
+        SELECT
+        DATE_FORMAT( create_time, '%m-%d' ) `key`,create_time,
+        ifnull( sum( price / 100.0 ), 0 ) `price`
+        FROM
+        member_pay_order
+        WHERE
+        deleted = 0
+        AND pay_status = 1
+        AND refund_price = 0
+        <if test="null!=startTime and null!=endTime">
+            and to_days(create_time) >= to_days(#{startTime})
+            and to_days(create_time) &lt;= to_days(#{endTime})
+        </if>
+        <if test="null!=storeId and storeId!=''">
+            and store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} AND type IN (12,13))
+        </if>
+        GROUP BY
+        DATE_FORMAT( create_time, '%m-%d' )
+        ) t
+        GROUP BY
+        `key`
+        ORDER BY create_time asc
+    </select>
+    <select id="getOrderStatistics" resultType="com.yanzu.framework.common.core.KeyValue">
+        select d.label as `key`,count(1) `value`
+        from member_order_info o
+        left join system_dict_data d on d.value=o.pay_type and d.dict_type='member_order_pay_type'
+        where o.deleted = 0
+        and o.status in (0, 1, 2)
+        <if test="null!=startTime and null!=endTime">
+            and to_days(o.create_time) >= to_days(#{startTime})
+            and to_days(o.create_time) &lt;= to_days(#{endTime})
+        </if>
+        <if test="null!=storeId and storeId!=''">
+            and o.store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and o.store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} AND type IN (12,13))
+        </if>
+        group by o.pay_type
+    </select>
+    <select id="getMemberStatistics" resultType="com.yanzu.framework.common.core.KeyValue">
+        select DATE_FORMAT(create_time, '%m-%d') `key`,count(distinct user_id) `value`
+        from member_order_info
+        where deleted = 0
+        and status in (0, 1, 2)
+        <if test="null!=startTime and null!=endTime">
+            and to_days(create_time) >= to_days(#{startTime})
+            and to_days(create_time) &lt;= to_days(#{endTime})
+        </if>
+        <if test="null!=storeId and storeId!=''">
+            and store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} AND type IN (12,13))
+        </if>
+        group by DATE_FORMAT(create_time, '%m-%d')
+        order by create_time asc
+
+    </select>
+    <select id="getNewMemberStatistics" resultType="com.yanzu.framework.common.core.KeyValue">
+
+
+    </select>
+    <select id="getRoomUseStatistics" resultType="com.yanzu.framework.common.core.KeyValue">
+        select DATE_FORMAT(create_time, '%m-%d') `key`,count(1) `value`
+        from member_order_info
+        where deleted = 0
+        and status in (1, 2)
+        <if test="null!=startTime and null!=endTime">
+            and to_days(create_time) >= to_days(#{startTime})
+            and to_days(create_time) &lt;= to_days(#{endTime})
+        </if>
+        <if test="null!=storeId and storeId!=''">
+            and store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} AND type IN (12,13))
+        </if>
+        group by DATE_FORMAT(create_time, '%m-%d')
+        order by create_time asc
+
+    </select>
+    <select id="getRoomUseHourStatistics" resultType="com.yanzu.framework.common.core.KeyValue">
+        select DATE_FORMAT(create_time, '%Y-%m-%d') `key`,sum(TIMESTAMPDIFF(MINUTE,start_time,end_time))/60.0 `value`
+        from member_order_info
+        where deleted = 0
+        and status in ( 1, 2)
+        <if test="null!=startTime and null!=endTime">
+            and to_days(create_time) >= to_days(#{startTime})
+            and to_days(create_time) &lt;= to_days(#{endTime})
+        </if>
+        <if test="null!=storeId and storeId!=''">
+            and store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} AND type IN (12,13))
+        </if>
+        group by DATE_FORMAT(create_time, '%Y-%m-%d')
+        order by create_time DESC
+
+    </select>
+    <select id="getByStatus" resultType="com.yanzu.module.member.dal.dataobject.orderinfo.OrderInfoDO">
+        select order_id,
+               order_no,
+               store_id,
+               room_id,
+               user_id,
+               start_time,
+               end_time,
+               status
+        from member_order_info o
+        where o.deleted = 0
+          and o.status = #{status}
+
+    </select>
+    <select id="countByRoomIdGtNow" resultType="java.lang.Integer">
+        select count(1)
+        from member_order_info
+        where deleted = 0
+          and room_id = #{roomId}
+          and status = 0
+          and start_time > now()
+    </select>
+    <select id="countByRoomId" resultType="java.lang.Integer">
+        select count(1)
+        from member_order_info
+        where deleted = 0
+        and room_id = #{roomId}
+        and status in (0, 1)
+        and start_time>now()
+        <if test="null!=ignoreOrderId and ignoreOrderId!=''">
+            and order_id!=#{ignoreOrderId}
+        </if>
+    </select>
+    <select id="getByOrderNo" resultType="com.yanzu.module.member.dal.dataobject.orderinfo.OrderInfoDO">
+        select *
+        from member_order_info
+        where deleted = 0
+          and order_no = #{orderNo}
+
+    </select>
+    <select id="getByRoomCurrent" resultType="com.yanzu.module.member.dal.dataobject.orderinfo.OrderInfoDO">
+        select *
+        from member_order_info
+        where deleted = 0
+          and status IN (0,1)
+          and room_id = #{roomId}
+          and start_time &lt;= now()
+          and end_time > now() limit 1
+    </select>
+    <select id="getWxTotalMoney"
+            resultType="java.lang.Integer">
+        select ifnull(sum(price),0) from member_pay_order where deleted=0 AND pay_status=1 AND refund_price=0
+        AND store_id IN
+        <foreach collection="storeIds" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="null!=storeId">
+            AND store_id=#{storeId}
+        </if>
+    </select>
+
+    <select id="countByStoreIds" resultType="java.lang.Integer">
+        select count(1) from member_order_info where deleted=0 AND status!=3
+        AND store_id IN
+        <foreach collection="storeIds" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="null!=storeId">
+            AND store_id=#{storeId}
+        </if>
+    </select>
+    <select id="countByRoomCurrent" resultType="java.lang.Integer">
+        select count(1)
+        from member_order_info
+        where deleted = 0
+        and status = 1
+        and room_id = #{roomId}
+        <if test="null!=ignoreOrderId and ignoreOrderId!=''">
+            and order_id !=#{ignoreOrderId}
+        </if>
+    </select>
+    <select id="getCountOrder" resultType="java.lang.Integer">
+        select count(1)
+        from member_order_info
+        where deleted = 0 AND status!=3
+        <if test="null!=startTime and null!=endTime">
+            and to_days(create_time) >= to_days(#{startTime})
+            and to_days(create_time) &lt;= to_days(#{endTime})
+        </if>
+        <if test="null!=storeId and storeId!=''">
+            and store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} and type IN (12,13))
+        </if>
+    </select>
+    <select id="getListByJob" resultType="com.yanzu.module.member.controller.app.order.vo.OrderListJobVO">
+        select o.order_id,
+               o.order_no,
+               o.deposit,
+               o.store_id,
+               o.room_id,
+               o.user_id,
+               o.start_time,
+               o.end_time,
+               o.status,
+               r.room_class,
+               r.jump_clear
+        from member_order_info o
+                 left join member_room_info r ON r.room_id = o.room_id
+                 left join member_store_info s ON s.store_id = o.store_id
+        where o.deleted = 0 and s.deleted=0
+          and o.status in (0, 1, 2)
+          and o.start_time >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+        --查询提前7天的数据就行，避免数据太多了，不好处理
+    </select>
+
+    <select id="countByPreOrder" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM
+        ( SELECT
+        start_time, DATE_ADD( end_time, INTERVAL #{clearTime} MINUTE ) end_time
+        FROM member_order_info
+        WHERE deleted = 0 AND status IN (0,1) AND room_id = #{roomId}
+        <if test="null!=ignoreOrderId and ignoreOrderId!=''">
+            and order_id !=#{ignoreOrderId}
+        </if>
+        ) AS t
+        WHERE
+        (
+        (end_time >=#{startTime} AND end_time&lt;=#{endTime})
+        OR (start_time>=#{startTime} AND start_time&lt;=#{endTime})
+        OR (start_time>=#{startTime} AND end_time&lt;=#{endTime})
+        OR (start_time&lt;=#{startTime} AND end_time>=#{endTime})
+        )
+    </select>
+    <select id="countByUserAndStoreId" resultType="java.lang.Integer">
+        select count(1)
+        from member_order_info
+        WHERE deleted = 0
+          and store_id = #{storeId}
+          and user_id = #{userId}
+          and status !=3
+    </select>
+    <select id="countUser" resultType="java.lang.Integer">
+        select count(distinct user_id)
+        from member_order_info
+        where deleted = 0 AND status!=3
+        <if test="null!=startTime and null!=endTime">
+            and to_days(create_time) >= to_days(#{startTime})
+            and to_days(create_time) &lt;= to_days(#{endTime})
+        </if>
+        <if test="null!=storeId and storeId!=''">
+            and store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} and type IN (12,13))
+        </if>
+    </select>
+    <select id="getIncomeStatistics"
+            resultType="com.yanzu.module.member.controller.app.chart.vo.AppIncomeStatisticsRespVO">
+        select t.* from (
+        SELECT
+        s.store_name,
+        (p.price/100) price,
+        '微信' AS payType,
+        p.create_time
+        FROM
+        member_pay_order p
+        LEFT JOIN member_store_info s ON p.store_id = s.store_id
+        WHERE
+        p.deleted = 0
+        AND p.pay_status = 1
+        AND p.refund_price = 0
+        <if test="null!=startTime and null!=endTime">
+            and to_days(p.create_time) >= to_days(#{startTime})
+            and to_days(p.create_time) &lt;= to_days(#{endTime})
+        </if>
+        <if test="null!=storeId and storeId!=''">
+            and p.store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and p.store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} AND type
+            IN (12,13))
+        </if>
+        UNION ALL
+        SELECT
+        s.store_name,
+        g.group_pay_price price,
+        case group_pay_type
+        when 1 then '美团'
+        when 2 then '抖音'
+        when 3 then '快手'
+        end as payType,
+        g.create_time
+        FROM
+        member_group_pay_info g
+        LEFT JOIN member_store_info s ON g.store_id = s.store_id
+        WHERE
+        g.deleted = 0
+        <if test="null!=startTime and null!=endTime">
+            and to_days(g.create_time) >= to_days(#{startTime})
+            and to_days(g.create_time) &lt;= to_days(#{endTime})
+        </if>
+        <if test="null!=storeId and storeId!=''">
+            and g.store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and g.store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} AND type
+            IN (12,13))
+        </if>
+        ) as t
+        order by t.create_time desc
+    </select>
+    <select id="getRechargeStatistics"
+            resultType="com.yanzu.module.member.controller.app.chart.vo.AppRechargeStatisticsRespVO">
+        SELECT
+        s.store_name,
+        (p.price/100) price,
+        p.create_time
+        FROM
+        member_pay_order p
+        LEFT JOIN member_store_info s ON p.store_id = s.store_id
+        WHERE
+        p.deleted = 0
+        AND p.pay_status = 1
+        AND p.order_no like 'CZ%'
+        AND p.refund_price = 0
+        <if test="null!=startTime and null!=endTime">
+            and to_days(p.create_time) >= to_days(#{startTime})
+            and to_days(p.create_time) &lt;= to_days(#{endTime})
+        </if>
+        <if test="null!=storeId and storeId!=''">
+            and p.store_id=#{storeId}
+        </if>
+        <if test="null==storeId or storeId==''">
+            and p.store_id in (select store_id from member_store_user where deleted = 0 and user_id = #{userId} AND type
+            IN (12,13))
+        </if>
+    </select>
+    <select id="getRepeatOrder" resultType="com.yanzu.module.member.dal.dataobject.orderinfo.OrderInfoDO">
+        select *
+        from member_order_info
+        where deleted = 0
+          and room_id = #{roomId}
+          and end_time &lt; #{startTime}
+        order by end_time desc limit 1
+    </select>
+    <select id="countNewUserByStoreId" resultType="java.lang.Integer">
+        select count(1)
+        from member_order_info
+        where deleted = 0
+          AND user_id = #{userId}
+          AND store_id = #{storeId}
+          AND status!=3
+    </select>
+
+</mapper>

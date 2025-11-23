@@ -1,0 +1,54 @@
+<!--位置功能测试页面-->
+<view class="container">
+  <view class="header">
+    <text class="title">位置功能测试</text>
+  </view>
+
+  <!-- 用户位置信息 -->
+  <view class="section">
+    <view class="section-title">用户位置信息</view>
+    <view class="info-card" wx:if="{{userLocation}}">
+      <view class="info-item">
+        <text class="label">纬度:</text>
+        <text class="value">{{userLocation.latitude}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">经度:</text>
+        <text class="value">{{userLocation.longitude}}</text>
+      </view>
+      <view class="info-item" wx:if="{{userAddress}}">
+        <text class="label">地址:</text>
+        <text class="value">{{userAddress}}</text>
+      </view>
+    </view>
+    <view class="no-data" wx:else>
+      <text>暂无位置信息</text>
+    </view>
+  </view>
+
+  <!-- 测试门店列表 -->
+  <view class="section">
+    <view class="section-title">测试门店距离</view>
+    <view class="store-list">
+      <view class="store-item" wx:for="{{testStores}}" wx:key="name">
+        <view class="store-info">
+          <text class="store-name">{{item.name}}</text>
+          <text class="store-address">{{item.address}}</text>
+          <text class="store-distance" wx:if="{{item.distance}}">
+            距离: {{item.distanceText}}
+          </text>
+        </view>
+        <view class="store-coords">
+          <text class="coord">{{item.lat}}, {{item.lng}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="button-group">
+    <button class="test-btn" bindtap="getUserLocation">获取位置</button>
+    <button class="test-btn" bindtap="calculateDistances">计算距离</button>
+    <button class="test-btn" bindtap="testCoordinateValidation">测试坐标验证</button>
+  </view>
+</view>

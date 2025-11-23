@@ -1,0 +1,105 @@
+<!--pages/iotDevice/iotDevice.wxml-->
+<view class="container">
+  <!-- 自定义导航栏 -->
+
+
+  <!-- 主要内容区域 -->
+  <view class="main-content">
+    <!-- 设备统计信息 -->
+    <view class="device-stats-card" wx:if="{{deviceStats.total > 0}}">
+      <view class="stats-title">设备统计</view>
+      <view class="stats-grid">
+        <view class="stats-item">
+          <text class="stats-number">{{deviceStats.total}}</text>
+          <text class="stats-label">总设备</text>
+        </view>
+        <view class="stats-item">
+          <text class="stats-number">{{deviceStats.iotDevices}}</text>
+          <text class="stats-label">IoT设备</text>
+        </view>
+        <view class="stats-item">
+          <text class="stats-number">{{deviceStats.onlineDevices}}</text>
+          <text class="stats-label">在线设备</text>
+        </view>
+        <view class="stats-item">
+          <text class="stats-number">{{deviceStats.offlineDevices}}</text>
+          <text class="stats-label">离线设备</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 设备列表 -->
+    <view class="device-list">
+      <view class="list-header">
+        <text class="list-title">设备列表 ({{totalDevices}})</text>
+        <van-button type="primary" size="mini" bindtap="refreshData" loading="{{refreshing}}">
+          {{refreshing ? '刷新中...' : '刷新'}}
+        </van-button>
+      </view>
+      
+      <view class="device-items">
+        <view class="device-item" wx:for="{{deviceList}}" wx:key="deviceId" data-index="{{index}}" bindtap="onDeviceItemClick">
+          <view class="device-item-header">
+            <view class="device-item-name">
+              <text class="device-name-text">{{item.name || item.deviceName || '设备'}}</text>
+              <view class="device-iot-badge" wx:if="{{item.isIoTDevice}}">IoT</view>
+            </view>
+            <view class="device-item-right">
+              <view class="device-item-status" style="color: {{getStatusColor(item.status)}}">
+                {{getStatusText(item.status)}}
+              </view>
+              <view class="device-arrow" wx:if="{{item.isIoTDevice}}" data-index="{{index}}" bindtap="onDeviceItemClick">
+                <van-icon name="arrow" size="16px" color="#999" />
+              </view>
+            </view>
+          </view>
+          <view class="device-item-details">
+            <view class="detail-row">
+              <text class="detail-label">设备ID:</text>
+              <text class="detail-value">{{item.deviceId}}</text>
+            </view>
+            <view class="detail-row" wx:if="{{item.productKey}}">
+              <text class="detail-label">产品Key:</text>
+              <text class="detail-value">{{item.productKey}}</text>
+            </view>
+            <view class="detail-row" wx:if="{{item.deviceName}}">
+              <text class="detail-label">设备名:</text>
+              <text class="detail-value">{{item.deviceName}}</text>
+            </view>
+          </view>
+          <view class="device-item-footer" wx:if="{{!item.isIoTDevice}}">
+            <view class="device-not-supported">
+              <van-icon name="warning-o" size="14px" color="#ff4d4f" />
+              <text>该设备不支持IoT管理</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 加载更多 -->
+      <view class="load-more" wx:if="{{deviceList.length > 0}}">
+        <van-button 
+          type="default" 
+          size="small" 
+          loading="{{loading}}"
+          bindtap="loadMoreDevices"
+        >
+          {{loading ? '加载中...' : '加载更多'}}
+        </van-button>
+      </view>
+      
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{deviceList.length === 0 && !loading}}">
+        <van-icon name="info-o" size="48px" color="#ccc" />
+        <text class="empty-text">暂无设备数据</text>
+        <van-button type="primary" size="small" bindtap="refreshData" style="margin-top: 16px;">
+          重新加载
+        </van-button>
+      </view>
+      
+    </view>
+  </view>
+
+</view>
+
+

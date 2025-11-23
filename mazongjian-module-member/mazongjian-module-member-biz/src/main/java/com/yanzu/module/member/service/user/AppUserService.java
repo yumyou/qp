@@ -1,0 +1,155 @@
+package com.yanzu.module.member.service.user;
+
+import com.yanzu.framework.common.pojo.PageResult;
+import com.yanzu.framework.common.validation.Mobile;
+import com.yanzu.module.member.controller.app.order.vo.WxPayOrderRespVO;
+import com.yanzu.module.member.controller.app.user.vo.*;
+import com.yanzu.module.member.dal.dataobject.user.MemberUserDO;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * 会员用户 Service 接口
+ *
+ * @author 芋道源码
+ */
+public interface AppUserService {
+
+    /**
+     * 通过手机查询用户
+     *
+     * @param mobile 手机
+     * @return 用户对象
+     */
+    MemberUserDO getUserByMobile(String mobile);
+
+    /**
+     * 基于用户昵称，模糊匹配用户列表
+     *
+     * @param nickname 用户昵称，模糊匹配
+     * @return 用户信息的列表
+     */
+    List<MemberUserDO> getUserListByNickname(String nickname);
+
+    /**
+     * 基于手机号创建用户。
+     * 如果用户已经存在，则直接进行返回
+     *
+     * @param mobile     手机号
+     * @param registerIp 注册 IP
+     * @return 用户对象
+     */
+    MemberUserDO createUserIfAbsent(@Mobile String mobile, String registerIp);
+
+    /**
+     * 更新用户的最后登陆信息
+     *
+     * @param id      用户编号
+     * @param loginIp 登陆 IP
+     */
+    void updateUserLogin(Long id, String loginIp);
+
+    void updateUserType(Long id, Integer userType);
+
+    /**
+     * 通过用户 ID 查询用户
+     *
+     * @param id 用户ID
+     * @return 用户对象信息
+     */
+    MemberUserDO getUser(Long id);
+
+    /**
+     * 通过用户 ID 查询用户们
+     *
+     * @param ids 用户 ID
+     * @return 用户对象信息数组
+     */
+    List<MemberUserDO> getUserList(Collection<Long> ids);
+
+    /**
+     * 修改用户昵称
+     *
+     * @param userId   用户id
+     * @param nickname 用户新昵称
+     */
+    void updateUserNickname(Long userId, String nickname);
+
+    /**
+     * 修改用户头像
+     *
+     * @param userId      用户id
+     * @param inputStream 头像文件
+     * @return 头像url
+     */
+    String updateUserAvatar(Long userId, InputStream inputStream) throws Exception;
+
+    /**
+     * 修改手机
+     *
+     * @param userId 用户id
+     * @param reqVO  请求实体
+     */
+    void updateUserMobile(Long userId, AppUserUpdateMobileReqVO reqVO);
+
+    /**
+     * 直接修改手机（免验证码，用于内测/管理端）
+     */
+    void updateUserMobileDirect(Long userId, String mobile);
+
+    /**
+     * 判断密码是否匹配
+     *
+     * @param rawPassword     未加密的密码
+     * @param encodedPassword 加密后的密码
+     * @return 是否匹配
+     */
+    boolean isPasswordMatch(String rawPassword, String encodedPassword);
+
+    AppUserInfoRespVO getUserInfo(Long loginUserId);
+
+    PageResult<AppUserMoneyBillRespVO> getBalancePage(AppUserMoneyBillPageReqVO reqVO);
+
+    List<AppGiftBalanceListRespVO> getGiftBalanceList();
+
+    void eechargeBalance(AppRechargeBalanceReqVO reqVO);
+
+    AppFranchiseInfoRespVO getFranchiseInfo(HttpServletRequest request);
+
+    void saveFranchiseInfo(AppFranchiseInfoReqVO reqVO);
+
+    PageResult<AppCouponPageRespVO> getCouponPage(AppCouponPageReqVO reqVO);
+
+    void updateUserAvatarUrl(Long userId, String avatarUrl);
+
+    WxPayOrderRespVO preRechargeBalance(AppPreRechargeBalanceReqVO reqVO);
+
+    BigDecimal getGiftBalance(Long storeId);
+
+    AppStoreBalanceRespVO getStoreBalance(Long storeId);
+
+    /**
+     * 收藏门店
+     *
+     * @param storeId 门店ID
+     */
+    void favoriteStore(Long storeId);
+
+    /**
+     * 取消收藏门店
+     *
+     * @param storeId 门店ID
+     */
+    void unfavoriteStore(Long storeId);
+
+    /**
+     * 获取用户收藏的门店列表
+     *
+     * @return 收藏的门店列表
+     */
+    List<AppFavoriteStoreRespVO> getFavoriteStores();
+}

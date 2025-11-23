@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanzu.module.member.dal.mysql.storeinfo.StoreInfoMapper">
+
+    <!--
+        一般情况下，尽可能使用 Mapper 进行 CRUD 增删改查即可。
+        无法满足的场景，例如说多表关联查询，才使用 XML 编写 SQL。
+        代码生成器暂时只生成 Mapper XML 文件本身，更多推荐 MybatisX 快速开发插件来生成查询。
+        文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
+     -->
+    <resultMap id="StorePageList" type="com.yanzu.module.member.controller.app.index.vo.AppStorePageRespVO">
+        <id column="store_id" property="storeId"></id>
+        <result column="store_name" property="storeName"/>
+        <result column="city_name" property="cityName"/>
+        <result column="head_img" property="headImg"/>
+        <result column="lat" property="lat"/>
+        <result column="lon" property="lon"/>
+        <result column="address" property="address"/>
+        <result column="status" property="status"/>
+        <result column="distance" property="distance"/>
+        <collection property="discountRules" column="store_id" ofType="String"
+                    select="getDiscountRules"/>
+        <collection property="freeRoomNum" column="store_id" ofType="Long"
+                    select="getFreeRoomNum"/>
+        <collection property="totalRoomNum" column="store_id" ofType="Long"
+                    select="getTotalRoomNum"/>
+        <collection property="subscribeTime" column="store_id" ofType="String"
+                    select="getSubscribeTime"/>
+    </resultMap>
+    <update id="executeExpire">
+        update member_store_info
+        set status=2
+        where deleted = 0
+          and status!=2
+          and expire_time is not null
+          and expire_time&lt; now()
+    </update>
+    <update id="renew">
+        update member_store_info
+        set expire_time=#{newDate}
+        <if test="null!=status">
+            ,status=#{status}
+        </if>
+        where deleted=0 and store_id=#{storeId}
+
+    </update>
+    <select id="getDiscountRules" resultType="java.lang.String">
+        select concat('充值', pay_money, '元,赠送', gift_money, '元！')
+        from member_discount_rules
+        where deleted = 0
+          and store_id = #{store_id}
+          and status = 1
+          and exprice_time > now()
+        order by pay_money asc
+    </select>
+    <select id="getFreeRoomNum" resultType="Long">
+        select count(1)
+        from member_room_info
+        where deleted = 0
+        and store_id = #{store_id}
+        and status = 1
+    </select>
+    <select id="getTotalRoomNum" resultType="Long">
+        select count(1)
+        from member_room_info
+        where deleted = 0
+        and store_id = #{store_id}
+    </select>
+    <select id="getSubscribeTime" resultType="java.lang.String">
+        select create_time AS subscribeTime
+        from member_order_info
+        where deleted = 0
+        and store_id = #{store_id}
+        and status != 3
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+    <select id="getCityList" resultType="java.lang.String">
+        select distinct city_name
+        from member_store_info
+        where deleted = 0
+          and status = 0
+        order by create_time asc
+    </select>
+    <select id="getStorePageList"
+            resultMap="StorePageList">
+        select s.store_id,s.store_name,s.city_name,s.head_img,s.lat,s.lon,s.address,s.status,s.kefu_phone,
+        <if test=" null!=reqVO.lat and null!=reqVO.lon">
+            (
+            6371 * ACOS(
+            COS(RADIANS(#{reqVO.lat})) *
+            COS(RADIANS(lat)) *
+            COS(RADIANS(lon) - RADIANS(#{reqVO.lon})) +
+            SIN(RADIANS(#{reqVO.lat})) * SIN(RADIANS(lat))
+            )
+            ) AS distance
+        </if>
+        <if test=" null==reqVO.lat or null==reqVO.lon">
+           9999 AS distance
+        </if>
+        from member_store_info s
+        <where>
+            s.deleted=0 and s.status=0
+            <if test="null!=reqVO.cityName and reqVO.cityName!=''">
+                and s.city_name=#{reqVO.cityName}
+            </if>
+            <if test=" null!=reqVO.name and reqVO.name!=''">
+                and locate(#{reqVO.name},s.store_name)>0
+            </if>
+            <if test="null!=reqVO.often and reqVO.often==true">
+                and s.store_id IN (
+                    select DISTINCT store_id from member_order_info where deleted=0 and user_id=#{userId}
+                )
+            </if>
+        </where>
+        <if test=" null!=reqVO.lat and null!=reqVO.lon">
+            order by distance asc
+        </if>
+    </select>
+    <select id="getStoreInfo"
+            resultType="com.yanzu.module.member.controller.app.index.vo.AppIndexStoreInfoRespVO">
+        select *
+        <if test="null!=lat and null!=lon and lat!='' and lon!=''">
+            ,(
+            6371 * ACOS(
+            COS(RADIANS(#{lat})) *
+            COS(RADIANS(lat)) *
+            COS(RADIANS(lon) - RADIANS(#{lon})) +
+            SIN(RADIANS(#{lat})) * SIN(RADIANS(lat))
+            )
+            ) AS distance
+        </if>
+        from member_store_info
+        where deleted = 0
+        and status = 0
+        and store_id = #{storeId}
+
+    </select>
+    <select id="getStoreList" resultType="com.yanzu.framework.common.core.KeyValue">
+        select s.store_name `key`,s.store_id `value`
+        from member_store_info s
+        left join member_store_user su ON su.store_id=s.store_id and su.type!=11
+        where s.deleted = 0 and su.deleted=0
+        and su.user_id=#{userId}
+        <if test=" null!=cityName and cityName!=''">
+            and locate(#{cityName},s.city_name)>0
+        </if>
+        <if test=" null!=name and name!=''">
+            and locate(#{name},s.store_name)>0
+        </if>
+        order by s.store_id asc
+
+    </select>
+    <select id="getRoomInfoList"
+            resultType="com.yanzu.module.member.controller.app.index.vo.AppRoomInfoListRespVO">
+        select r.*,s.clear_time,
+               device.device_data lockData,
+               gateway.device_id gatewayId
+        from member_room_info r
+        left join member_store_info s ON r.store_id=s.store_id
+        left join member_device_info device ON device.room_id = r.room_id and device.type = 5 and device.deleted = 0
+        left join member_device_info gateway ON gateway.room_id = r.room_id and gateway.type = 6 and gateway.deleted = 0
+        where r.deleted = 0
+          and r.store_id = #{storeId}
+        <if test="null!=roomClass">
+            and r.room_class=#{roomClass}
+        </if>
+        <if test="null!=status">
+            and r.status=#{status}
+        </if>
+        order by r.status , r.sort_id asc
+    </select>
+    <select id="getPageList" resultType="com.yanzu.module.member.controller.app.store.vo.AppStoreAdminRespVO">
+        SELECT
+        s.*,device.device_data lockData,
+        ( SELECT count( 1 ) FROM member_room_info WHERE deleted = 0 AND store_id = s.store_id ) roomNum,
+        ( SELECT count( 1 ) FROM member_device_info WHERE deleted = 0 AND store_id = s.store_id ) deviceNum,
+        ( SELECT count( 1 ) FROM member_device_info WHERE deleted = 0 AND STATUS = 1 AND store_id = s.store_id )
+        deviceOnlineNum
+        FROM
+        member_store_info s
+        left join member_store_user su on su.store_id=s.store_id and su.deleted=0
+        left join member_device_info device
+        ON device.store_id = s.store_id and device.room_id is null and device.type = 5 and device.deleted = 0
+        WHERE
+        s.deleted = 0
+        and su.user_id=#{reqVO.userId} and su.type in (12,13)
+        <if test="null!=reqVO">
+            <if test="null!=reqVO.name and reqVO.name!=''">
+                and locate(#{reqVO.name},s.store_name)>0
+            </if>
+            <if test="null!=reqVO.cityName and reqVO.cityName!=''">
+                and s.city_name=#{reqVO.cityName}
+            </if>
+        </if>
+
+    </select>
+    <select id="getStoreListByMember" resultType="com.yanzu.framework.common.core.KeyValue">
+        select s.store_name `key`,s.store_id `value`
+        from member_store_info s
+        where s.deleted = 0
+        and s.status = 0
+        <if test=" null!=cityName and cityName!=''">
+            and locate(#{cityName},s.city_name)>0
+        </if>
+        <if test=" null!=name and name!=''">
+            and locate(#{name},s.store_name)>0
+        </if>
+        order by s.store_id asc
+
+    </select>
+    <select id="getRoomInfo"
+            resultType="com.yanzu.module.member.controller.app.index.vo.AppRoomInfoListRespVO">
+        select r.*,
+               s.tx_start_hour,
+               s.tx_hour,
+               s.work_price enableWorkPrice,
+               s.clear_time clearTime
+        from member_room_info r
+        left join member_store_info s ON r.store_id=s.store_id
+        where r.deleted = 0
+          and r.room_id = #{roomId}
+    </select>
+    <select id="getNameMapByIds" resultType="com.yanzu.framework.common.core.KeyValue">
+        select store_id as 'key', store_name as 'value'
+        from member_store_info
+        where deleted = 0 and
+        store_id in
+        <foreach collection="collection" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </select>
+    <select id="getListByIds" resultType="com.yanzu.module.member.dal.dataobject.storeinfo.StoreInfoDO">
+        select * from
+        member_store_info
+        where deleted = 0 and
+        store_id in
+        <foreach collection="collection" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </select>
+    <select id="getNameById" resultType="java.lang.String">
+        select store_name
+        from member_store_info
+        where deleted = 0
+          and store_id = #{storeId}
+    </select>
+    <select id="getDouyinPoiId" resultType="java.lang.String">
+        select douyin_poi_id
+        from member_store_info
+        where deleted = 0
+          and store_id = #{storeId}
+    </select>
+    <select id="getOrderDoorOpen" resultType="java.lang.Boolean">
+        select order_door_open
+        from member_store_info
+        where deleted = 0 AND store_id=#{storeId}
+    </select>
+
+</mapper>

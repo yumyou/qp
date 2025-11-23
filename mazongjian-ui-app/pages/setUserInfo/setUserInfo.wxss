@@ -1,0 +1,91 @@
+/* 页面背景灰色 */
+.userinfo-bg {
+  height: 100vh;
+  padding-top: 20rpx;
+  box-sizing: border-box;
+  background: #f6f6f6;
+}
+
+
+/* 信息卡片 */
+.userinfo-card {
+  background: #fff;
+  border-radius: 24rpx;
+  margin: 0 32rpx;
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
+  padding: 0 0;
+  overflow: hidden;
+}
+.tip{
+  color: #999;
+  font-size: 24rpx;
+  margin:  auto;
+  display: inline-block;
+  background: transparent;
+  padding: 0;
+}
+.userinfo-row {
+  display: flex;
+  align-items: center;
+  height: 110rpx;
+  padding: 0 32rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  position: relative;
+  background: #fff;
+}
+.userinfo-row:last-child {
+  border-bottom: none;
+}
+.userinfo-label {
+  color: #666;
+  font-size: 30rpx;
+  width: 180rpx;
+}
+.userinfo-value {
+  color: #222;
+  margin-left: auto;
+  font-size: 30rpx;
+  text-align: right;
+}
+.userinfo-avatar {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 16rpx;
+}
+.userinfo-avatar image {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.icon-right {
+  font-size: 32rpx;
+  color: #bbb;
+  margin-left: 16rpx;
+}
+
+/* 退出登录按钮 */
+.userinfo-logout-btn-wrapper {
+  position: fixed;
+  bottom: env(safe-area-inset-bottom);
+  left: 0;
+  right: 0;
+  margin-top: 100rpx;
+  display: flex;
+  justify-content: center;
+}
+.userinfo-logout-btn {
+  width: 80vw;
+  max-width: 600rpx;
+  height: 80rpx;
+  background: #217346;
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 30rpx;
+  text-align: center;
+  line-height: 80rpx;
+  border: none;
+  margin: 0 auto;
+  box-shadow: 0 4rpx 16rpx rgba(33,115,70,0.08);
+}

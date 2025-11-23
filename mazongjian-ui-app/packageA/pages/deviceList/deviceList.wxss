@@ -1,0 +1,389 @@
+/* pages/deviceList/deviceList.wxss */
+page {
+  background-color: #f5f6fa;
+}
+
+.tabs {
+  background-color: #fff;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.tabs .van-dropdown-menu {
+  border-bottom: 1rpx solid #e8e8e8;
+  height: 88rpx;
+  box-shadow: none !important;
+}
+
+.tabs .van-dropdown-menu__title {
+  font-size: 28rpx !important;
+  color: #333;
+  font-weight: 500;
+}
+
+.container {
+  padding: 20rpx;
+  min-height: calc(100vh - 200rpx);
+}
+
+.list {
+  padding-top: 20rpx;
+}
+
+.list .item {
+  background: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  border: 1rpx solid #f0f0f0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.list .item:active {
+  transform: scale(0.98);
+  box-shadow: 0 1rpx 6rpx rgba(0, 0, 0, 0.12);
+}
+
+.list .item .line1 {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.list .item .line1 .info {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  line-height: 1.4;
+}
+
+.list .item .line1 .info label {
+  color: #666;
+  font-weight: 500;
+  min-width: 80rpx;
+  margin-right: 8rpx;
+}
+
+.list .item .line1 .info text {
+  color: #333;
+  font-weight: 400;
+}
+
+.list .item .line1 .info .sn {
+  font-family: 'Courier New', monospace;
+  background: #f8f9fa;
+  padding: 4rpx 8rpx;
+  border-radius: 6rpx;
+  font-size: 24rpx;
+  color: #495057;
+}
+
+.list .item .line2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.list .item .line2 .info {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #666;
+  flex: 1;
+  min-width: 0;
+}
+
+.list .item .line2 .info label {
+  margin-right: 8rpx;
+  font-weight: 500;
+}
+
+.list .item .line2 .info text {
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list .item .line2 .info .name {
+  font-weight: 500;
+  color: #1890ff;
+}
+
+.list .item .line2 .bind,
+.list .item .line2 .del {
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 60rpx;
+  text-align: center;
+}
+
+.list .item .line2 .bind {
+  background: #e6f7ff;
+  color: #1890ff;
+  border: 1rpx solid #91d5ff;
+}
+
+.list .item .line2 .bind:active {
+  background: #bae7ff;
+  transform: scale(0.95);
+}
+
+.list .item .line2 .del {
+  background: #fff2f0;
+  color: #ff4d4f;
+  border: 1rpx solid #ffccc7;
+  margin-left: 12rpx;
+}
+
+.list .item .line2 .del:active {
+  background: #ffccc7;
+  transform: scale(0.95);
+}
+
+.list .item.online {
+  border-left: 6rpx solid #52c41a;
+  background: linear-gradient(135deg, #f6ffed 0%, #f0f9ff 100%);
+}
+
+.list .item.online::before {
+  content: '';
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  width: 12rpx;
+  height: 12rpx;
+  background: #52c41a;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4rpx rgba(82, 196, 26, 0.2);
+}
+
+.list .item.offline {
+  border-left: 6rpx solid #d9d9d9;
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  opacity: 0.8;
+}
+
+.list .item.offline::before {
+  content: '';
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  width: 12rpx;
+  height: 12rpx;
+  background: #d9d9d9;
+  border-radius: 50%;
+}
+
+.container .buttom {
+  margin-top: 40rpx;
+  padding: 40rpx 0 160rpx;
+  text-align: center;
+  color: #999;
+  font-size: 24rpx;
+}
+
+.bottom{
+  width: 100%;
+  height: 90rpx;
+  text-align: center;
+  line-height: 90rpx;
+  position: fixed;
+  bottom: 30rpx;
+  display: flex;
+  justify-content:space-between;
+}
+
+.bottom .btn{
+  font-size: 36rpx;
+  width: 100%;
+  padding: 0rpx 30rpx;
+  margin: 0rpx 50rpx;
+  border-radius: 50rpx;
+}
+
+.dialog {
+  margin-top: 20rpx;
+  padding: 0 20rpx;
+}
+
+.picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.picker input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.picker .van-icon {
+  color: #999;
+  font-size: 24rpx;
+}
+
+.tips {
+  font-size: 24rpx;
+  padding: 20rpx 30rpx;
+  color: #999;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+  margin: 20rpx 0;
+}
+
+/* 空状态样式 */
+.empty-state {
+  text-align: center;
+  padding: 100rpx 40rpx;
+  color: #999;
+}
+
+.empty-state .icon {
+  font-size: 120rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+.empty-state .text {
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+
+/* 加载状态 */
+.loading {
+  text-align: center;
+  padding: 40rpx;
+  color: #999;
+  font-size: 24rpx;
+}
+
+/* 状态指示器 */
+.status.online {
+  color: #52c41a;
+  font-weight: 600;
+}
+
+.status.offline {
+  color: #999;
+  font-weight: 500;
+}
+
+/* 操作按钮容器 */
+.actions {
+  display: flex;
+  gap: 12rpx;
+  align-items: center;
+}
+
+/* 开关容器 */
+.switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 30rpx;
+  background: #f8f9fa;
+  margin: 20rpx 0;
+  border-radius: 8rpx;
+}
+
+.switch-label {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+/* 弹窗样式优化 */
+.van-dialog__header {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.van-dialog__content {
+  padding: 0;
+}
+
+.van-cell-group {
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.van-cell {
+  padding: 24rpx 30rpx;
+  font-size: 28rpx;
+}
+
+.van-cell__title {
+  color: #333;
+  font-weight: 500;
+  min-width: 120rpx;
+}
+
+.van-field__control {
+  color: #333;
+  font-size: 28rpx;
+}
+
+.van-field__placeholder {
+  color: #999;
+}
+
+/* 下拉选择器样式 */
+.picker input {
+  color: #333;
+  font-size: 28rpx;
+}
+
+.picker .plh {
+  color: #999;
+}
+
+/* 按钮样式优化 */
+.van-dialog__footer {
+  padding: 20rpx 30rpx 30rpx;
+}
+
+.van-button--default {
+  color: #666;
+  border-color: #d9d9d9;
+}
+
+.van-button--primary {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.van-button--primary:active {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+/* 响应式优化 */
+@media (max-width: 750rpx) {
+  .list .item .line2 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16rpx;
+  }
+  
+  .list .item .line2 .actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

@@ -1,0 +1,578 @@
+/* pages/doorList/doorList.wxss */
+page{
+  height: 100%; 
+  /* background-color: #ffffff; */
+  /* background-color: #9ecdf8a6; */
+  /* background-color: #fff; */
+ }
+ .position{
+  position: relative; 
+  height: 100%;
+ }
+
+/* 日期选择器样式 */
+.date-selector {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 40rpx 20rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.container{}
+.date-scroll {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.date-item {
+  display: inline-block;
+  width: 120rpx;
+  height: 120rpx;
+  margin-right: 16rpx;
+  border-radius: 12rpx;
+  border: 2rpx solid #f0f0f0;
+  text-align: center;
+  padding: 10rpx;
+  box-sizing: border-box;
+}
+
+.date-item.active {
+  border-color: #07c160;
+  background: #07c160;
+  color: #fff;
+}
+.logo-top{
+  background-color: #07c160;
+}
+
+.date-day {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.date-week {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.date-item.active .date-week {
+  color: #fff;
+}
+
+.calendar-btn {
+  display: block;
+  width:120rpx;
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+}
+
+.calendar-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.logo-name{
+  margin-bottom: 5rpx;
+  color: #fff !important;
+}
+.top-tabs-container {
+  padding: 20rpx 23rpx;
+  background-color: #fff;
+}
+
+.top-tabs {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.top-tabs .tab {
+  color: #000;
+  border-left: 4rpx solid #07c160;
+  padding-left: 16rpx;
+  font-size: 32rpx;
+  text-align: center;
+  margin: 0rpx 10rpx;
+}
+.top-tabs .tab.active {
+  color: #000;
+}
+
+.top-waring-container {
+  width: 100%;
+  /* height: 160rpx; */
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* margin-top: 10rpx; */
+}
+.top-waring {
+  display: flex;
+  padding: 10rpx 50rpx;
+  background-color: #f5f5f5;
+  /* background-color: red; */
+  /* width: 86%; */
+  line-height: 26rpx;
+  border-radius: 12rpx;
+}
+.top-waring .info{
+  font-size: 24rpx;
+  color: #909292c4;
+  margin-left: 10rpx;
+}
+.top-waring image {
+  width:70rpx;
+}
+.top-waring view {
+  display: inline-block;
+}
+
+.top-waring .bold {
+  font-weight: bold;
+}
+
+.other{
+  padding: 0 30rpx;
+  display: flex;
+  justify-content: space-between;
+}
+.other .swiper{
+  width: 100%;
+  /* margin-bottom: 10rpx; */
+}
+.other .swiper swiper{
+  font-size: 30rpx;
+  height: 40rpx;
+}
+.other .tips text{
+  margin-left: 20rpx;
+  color: #999;
+}
+.dates{
+  display: flex;
+  padding: 20rpx;
+  justify-content: space-between;
+  background-color: #ffffff;
+  border-bottom: 1rpx solid #ddd;
+}
+.dates .item{
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 8rpx;
+  text-align: center;
+  line-height: 40rpx;
+}
+.dates .item .date{
+  padding-top: 20rpx;
+}
+.lists .item{
+  padding: 30rpx;
+  border-bottom: 20rpx solid #f5f5f5;
+  background: #fff;
+  margin-bottom: 12rpx;
+}
+.item:last-of-type{
+  border-bottom: 0;
+}
+
+.lists .item:last-child{
+  border-bottom: 0;
+}
+.lists .item .top{
+  display: flex;
+  justify-content: space-between;
+}
+.lists .item .top .left{
+  width: 190rpx;
+  height: 230rpx;
+  border-radius: 10rpx;
+  position: relative;
+  overflow: hidden;
+}
+.lists .item .top .left .img{
+  width: 100%;
+  height: 100%;
+}
+.lists .item .top .left .flag{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50rpx;
+  line-height: 50rpx;
+  text-align: center;
+  font-size: 30rpx;
+  color: #fff;
+}
+.lists .item .top .left .doing{
+  background: #fec43c;
+}
+.lists .item .top .left .undo{
+  background: #05b1cc;
+}
+.lists .item .top .left .disabled{
+  background: #bebebe;
+}
+.lists .item .top .left .daiqingjie{
+  background: #58b92b;
+}
+.lists .item .top .left .bukeyong{
+  background: #2650d8;
+}
+
+.lists .item .top .right{
+  width: 470rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.lists .item .top .right .name{
+  font-weight: 700;
+  font-size: 30rpx;
+} 
+.lists .item .top .right .name .type{
+  font-size: 30rpx;
+}
+.lists .item .top .right .tags{
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20rpx;
+}
+.lists .item .top .right .tags .tag{
+  margin: 0 10rpx 10rpx 0;
+  border: 1px solid #06b4ca;
+  border-radius: 8rpx;
+  padding: 0 10rpx;
+  color: #06b4ca;
+  font-size: 24rpx;
+  line-height: 40rpx;
+}
+.lists .item .top .right .line2{
+  display: flex;
+  justify-content: space-between;
+}
+.priceLabel {
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+.lists .item .top .right .priceLabel .price{
+  font-weight: 700;
+  font-size: 28rpx;
+  line-height: 32rpx;
+  width: 200rpx;
+}
+.lists .item .top .right .priceLabel .price .color-attention{
+  font-weight: 700;
+  font-size: 26rpx;
+  line-height: 32rpx;
+  color: #07c160;
+}
+.lists .item .top .right .bottom{
+  display: flex;
+  justify-content: right;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lists .item .top .right .bottom .btn{
+  width: 200rpx;
+  height: 60rpx;
+  text-align: center;
+  line-height: 60rpx;
+  border-radius: 30rpx;
+  margin: 10rpx;
+  font-size: 32rpx;
+}
+.lists .item .top .right .bottom .disabled{
+  background: #bebebe;
+  color: #fff;
+}
+.lists .item .foot{
+  margin-top: 30rpx;
+}
+.lists .item .foot .foot-top{
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+}
+.lists .item .foot .foot-top .labels{
+  display: flex;
+}
+.lists .item .foot .foot-top .label::before{
+  content: "";
+  display: inline-block;
+  margin-right: 6rpx;
+  width: 20rpx;
+  height: 20rpx;
+  background: #e8e8e8;
+}
+.lists .item .foot .foot-top .label{
+  margin-right: 20rpx;
+}
+.lists .item .foot .foot-top .disabled::before{
+  background: var(--main-color);
+}
+.lists .item .foot .times{
+  margin-top: 20rpx;
+  display: flex;
+  justify-content: space-between;
+}
+.lists .item .foot .times .time{
+  font-size: 20rpx;
+  text-align: center;
+  color: #aaa;
+  border-top: 20rpx solid #e8e8e8;
+  width: 24rpx;
+  line-height: 30rpx;
+}
+.lists .item .foot .times .disabled{
+  border-color:  var(--main-color);
+}
+.pop{
+  width:600rpx;
+}
+.pop .head{
+  text-align: center;
+  line-height: 100rpx;
+}
+.pop .content{
+  padding: 30rpx;
+  font-size: 28rpx;
+  line-height: 40rpx;
+}
+.pop .foot{
+  width: 540rpx;
+  height: 80rpx;
+  text-align: center;
+  line-height: 80rpx;
+  border-radius: 8rpx;
+  border-width: 1rpx;
+  border-style: solid;
+  margin: 0 auto 30rpx;
+}
+
+.notes{
+  padding: 30rpx;
+  /* border-top: 1rpx solid #ddd; */
+}
+.notes .title{
+  border-width: 0;
+  border-left-width: 6rpx;
+  border-style: solid;
+  padding-left: 10rpx;
+  font-size: 32rpx;
+  margin-bottom: 10rpx;
+}
+.notes .line{
+  line-height: 48rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 新增状态样式 */
+.status-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.status-text {
+  font-size: 24rpx;
+  margin-bottom: 8rpx;
+}
+
+.status-text.disabled {
+  color: #999;
+}
+
+.status-text.available {
+  color: #07c160;
+}
+
+.status-text.cleaning {
+  color: #ff9500;
+}
+
+.status-text.occupied {
+  color: #ff3b30;
+}
+
+.status-text.booked {
+  color: #007aff;
+}
+
+.original-price {
+  font-size: 24rpx;
+  color: #999;
+  text-decoration: line-through;
+  margin-top: 8rpx;
+}
+
+.action-btn-2 {
+  background: #07c160;
+  color: #fff;
+  padding: 12rpx 24rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+/* 时间轴样式 */
+.lists .item .foot .foot-top .labels .label.unavailable::before {
+  background: #e8e8e8;
+}
+
+.lists .item .foot .foot-top .labels .label.available::before {
+  background: #fff;
+  border: 1rpx solid #ddd;
+}
+
+.lists .item .foot .foot-top .labels .label.low-price::before {
+  background: #07c160;
+}
+
+.lists .item .foot .foot-top .labels .label.high-price::before {
+  background: #ff9500;
+}
+
+.lists .item .foot .times .time.unavailable {
+  background: #e8e8e8;
+  color: #999;
+}
+
+.lists .item .foot .times .time.available {
+  background: #fff;
+  border: 1rpx solid #ddd;
+  color: #333;
+}
+
+.lists .item .foot .times .time.low-price {
+  background: #07c160;
+  color: #fff;
+}
+
+.lists .item .foot .times .time.high-price {
+  background: #ff9500;
+  color: #fff;
+}
+
+/* —— 对齐 orderSubmit 的时间轴风格 —— */
+.timeline {
+  margin-bottom: 30rpx;
+}
+
+.timeline-slots {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+  position: relative;
+  padding: 0 10rpx;
+  overflow-x: auto;
+  gap: 8rpx;
+}
+
+.timeline-slots::before {
+  content: '';
+  position: absolute;
+  top: 30rpx;
+  left: 20rpx;
+  right: 20rpx;
+  height: 3rpx;
+  background: #e8e8e8;
+  z-index: 1;
+}
+
+.time-slot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  min-width: 5rpx;
+  width: 5rpx;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.time-slot:active {
+  transform: scale(0.95);
+}
+
+.slot-marker {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #e8e8e8;
+  border: 2rpx solid #e8e8e8;
+  transition: all 0.3s;
+}
+
+.slot-marker.disabled {
+  background: #e8e8e8;
+  border-color: #e8e8e8;
+}
+
+.slot-marker.low-price {
+  background: #07c160;
+  border-color: #07c160;
+}
+
+.slot-marker.high-price {
+  background: #ff9500;
+  border-color: #ff9500;
+}
+
+.slot-time {
+  font-size: 20rpx;
+  color: #aaa;
+  line-height: 1;
+  white-space: nowrap;
+  transition: all 0.3s;
+}
+
+.timeline-legend {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 22rpx;
+  color: #666;
+}
+
+.legend-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+}
+
+.legend-dot.unavailable {
+  background: #e8e8e8;
+}
+
+.legend-dot.available {
+  background: #fff;
+  border: 2rpx solid #e8e8e8;
+}
+
+.legend-dot.low-price {
+  background: #07c160;
+}
+
+.legend-dot.high-price {
+  background: #ff9500;
+}

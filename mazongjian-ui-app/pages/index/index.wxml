@@ -1,0 +1,158 @@
+<wxs src="../../utils/magic.wxs" module="magic" />
+<view class="container">
+  <!-- 背景图片 -->
+  <image class="background" src="/pages/static/img/home.png" mode="aspectFill"></image>
+  <image class="home-text" src="/pages/static/img/bb.png" mode="aspectFit"></image>
+  <image class="home-logo" src="/pages/static/img/home-logo.png" mode="aspectFit" style="width: 100%;"></image>
+  <!-- banner轮播图 -->
+  <!-- 门店信息 -->
+  <view class="store-info-card">
+    <view class="store-info-content">
+      <view class="store-info-left">
+        <view class="store-name">{{doorinfodata.storeName || '暂未选择门店'}}</view>
+        <view class="store-address">
+          <image class="info-icon32" src="/pages/static/icon/address.png"></image>
+          <text class="address-text">{{doorinfodata.address}}</text>
+        </view>
+      </view>
+      <view class="store-info-right">
+        <view class="action-btn navigation-btn" bindtap="goTencentMap" data-info="{{doorinfodata}}">
+          <image class="info-icon" src="/pages/static/icon/map.png"></image>
+        </view>
+        <view class="action-btn phone-btn" bindtap="makePhoneCall">
+          <image class="info-icon" src="/pages/static/icon/phone.png"></image>
+        </view>
+      </view>
+    </view>
+    <view class="switch-store-btn" bindtap="switchStore">
+      <image class="info-icon32" src="/pages/static/icon/switch.png"></image>
+      <text class="switch-text">切换门店</text>
+    </view>
+  </view>
+  <!-- 快捷入口工具栏 -->
+   
+  <view class="toolbar-section" style=" height: 200px;width: 100%; background: url() no-repeat;background-size: 100% auto;  background-repeat: no-repeat;width: 100%;" id="toolbar">
+    <!-- 预约按钮 -->
+  <image class="home-grid" src="/pages/static/img/home-grid.png" mode="aspectFit" style="width: 100%;"></image>
+
+    <image class="tqg" src="/pages/static/img/tqg.png"></image>
+    <view class="toolbar-sub-item" bindtap="goRecharge">
+      <image mode="aspectFit" style="width:50px; height:50px" src="/pages/static/img/sz.png"></image>
+      <view class="name">余额充值</view>
+    </view>
+    <view class="toolbar-sub-item" bindtap="goGetBalance">
+      <image mode="aspectFit" style="width:50px; height:50px" src="/pages/static/img/zp.png"></image>
+      <view class="name">储值卡</view>
+    </view>
+    <view class="toolbar-sub-item" bindtap="goScanOpen">
+      <image mode="aspectFit" style="width:50px; height:50px" src="/pages/static/img/tq.png"></image>
+      <view class="name">扫码开台</view>
+    </view>
+    <view class="toolbar-sub-item" bindtap="goClubRegister">
+      <image mode="aspectFit" style="width:50px; height:50px" src="/pages/static/img/mj.png"></image>
+      <view class="name">俱乐部加盟</view>
+    </view>
+  </view>
+  <!-- 门店列表 -->
+  <!-- 筛选标签 -->
+  <view class="filter-tabs">
+    <view class="filter-tab {{currentFilter === 'billiards' ? 'active' : ''}}" bindtap="filterStores" data-type="billiards">
+      台球
+    </view>
+    <view class="filter-tab {{currentFilter === 'chess' ? 'active' : ''}}" bindtap="filterStores" data-type="chess">
+      棋牌
+    </view>
+  </view>
+  
+  <view class="store-lists" >
+    <view class="store-card" wx:for="{{filteredStoreList}}" wx:key="storeId" id="storeList">
+      <!-- 门店图片 -->
+      <view class="store-image-container">
+        <block wx:if="{{item.headImg}}">
+          <image class="store-card-image" src="{{item.headImg}}" catchtap="imgYu" data-index="{{index}}" mode="aspectFill"></image>
+        </block>
+        <block wx:else>
+          <image class="store-card-image" src="/logo.png" mode="aspectFill"></image>
+        </block>
+        <!-- 收藏按钮 -->
+        <view class="favorite-btn" catchtap="toggleFavorite" data-storeid="{{item.storeId}}" data-index="{{index}}">
+          <van-icon name="{{item.isFavorited ? 'star' : 'star-o'}}" size="20px" color="{{item.isFavorited ? '#ff6b6b' : '#fff'}}" />
+        </view>
+      </view>
+      <!-- 门店信息区域 -->
+      <view class="store-card-content" bind:tap="goStoreDetail" data-storeid="{{item.storeId}}" data-index="{{index}}">
+        <!-- 门店名称 -->
+        <view>
+          <view class="store-card-title">
+            {{item.storeName}}
+          </view>
+          <!-- 营业时间 -->
+          <view class="store-card-info">
+            <view class="info-icon iconfont icon-shijian"></view>
+            <text class="info-text">营业时间: {{item.businessHours || '00:00-24:00'}}</text>
+          </view>
+          <!-- 地址信息 -->
+          <view class="store-card-info">
+            <view class="info-icon iconfont icon-dingwei"></view>
+            <text class="info-text">{{item.address}}</text>
+          </view>
+          <!-- 距离信息 -->
+          <view class="store-card-info" wx:if="{{item.distance}}">
+            <view class="info-icon iconfont icon-juli"></view>
+            <text class="info-text">距离 {{item.distanceText || item.distance + 'km'}}</text>
+          </view>
+        </view>
+        <view>
+          <view class="app-icon">
+            <view class="left-section">
+              <text>房间</text>
+            </view>
+            <view class="right-section">
+              <text>{{item.totalRoomNum || '0'}}间</text>
+            </view>
+          </view>
+          <view class="action-btn-2 reserve-btn" catchtap="goStoreDetail" data-storeid="{{item.storeId}}" data-index="{{index}}">
+            <view class="btn-icon iconfont icon-phone" style="color: #fff;"></view>
+            <text style="margin:-10rpx 10rpx;color: #fff;"> | </text>
+            <text style="color: #fff;">立即预订</text>
+          </view>
+        </view>
+      </view>
+      <!-- 操作按钮区域 -->
+    </view>
+    <view style="height:100rpx"></view>
+  </view>
+
+</view>
+<!-- 门店公告弹出层 -->
+<van-popup round show="{{ popshow && !longShowPopup }}">
+  <view class="popup-content">
+    <view class="popup-head bg-primary">门店公告</view>
+    <view class="popup-body">
+      <rich-text nodes="{{doorinfodata.notice}}"></rich-text>
+    </view>
+    <view class="popup-foot border-primary" bind:tap="popClose">我已仔细阅读</view>
+  </view>
+</van-popup>
+<!-- WiFi信息弹窗 -->
+<van-dialog use-slot title="WiFi信息" class="wifiDialog" show="{{ wifiShow }}">
+  <view class="wifi-dialog">
+    <view class="wifi-dialog-item">
+      <label class="wifi-dialog-label">WiFi名称:</label>
+      <text>{{doorinfodata.wifiInfo}}</text>
+    </view>
+    <view class="wifi-dialog-item">
+      <label class="wifi-dialog-label">Wifi密码:</label>
+      <text>{{doorinfodata.wifiPwd}}</text>
+    </view>
+    <view class="wifi-dialog-btn">
+      <button class="wifi-btn-copy" bind:tap="copyWifi" data-ssid="{{doorinfodata.wifiInfo}}" data-pwd="{{doorinfodata.wifiPwd}}">
+        复制密码
+      </button>
+      <button class="wifi-btn-connect" bind:tap="connectWifi" data-ssid="{{doorinfodata.wifiInfo}}" data-pwd="{{doorinfodata.wifiPwd}}">
+        一键连接
+      </button>
+    </view>
+    <view class="wifi-dialog-info">部分机型不支持一键连接,请复制密码自行连接</view>
+  </view>
+</van-dialog>

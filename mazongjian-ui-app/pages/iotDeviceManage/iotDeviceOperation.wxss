@@ -1,0 +1,401 @@
+/* pages/iotDevice/iotDeviceOperation.wxss */
+@import "../../style/common.wxss";
+
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* 自定义导航栏 */
+.custom-navbar {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.navbar-left, .navbar-right {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-title {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* 主要内容区域 */
+.main-content {
+  padding-bottom: 20px;
+  position: relative;
+}
+
+/* Loading 效果样式 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.loading-text {
+  font-size: 14px;
+  color: #666;
+}
+
+.loading-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #999;
+  font-size: 12px;
+}
+
+/* 设备信息卡片 */
+.device-info-card {
+  background: #fff;
+  margin: 16px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.device-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.device-status {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.device-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-size: 14px;
+  color: #666;
+  min-width: 80px;
+}
+
+.value {
+  font-size: 14px;
+  color: #333;
+  flex: 1;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* 设备控制卡片 */
+.device-control-card {
+  background: #fff;
+  margin: 16px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.control-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.control-item:last-child {
+  border-bottom: none;
+}
+
+.control-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.control-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.control-desc {
+  font-size: 12px;
+  color: #666;
+}
+
+/* 属性卡片 */
+.properties-card {
+  background: #fff;
+  margin: 16px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.properties-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.property-item {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.property-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.property-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.property-time {
+  font-size: 12px;
+  color: #666;
+}
+
+.property-value {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.enum-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* 属性设置卡片 */
+.property-set-card {
+  background: #fff;
+  margin: 16px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.property-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 历史数据查询卡片 */
+.history-query-card {
+  background: #fff;
+  margin: 16px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.query-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.time-range {
+  display: flex;
+  gap: 12px;
+}
+
+.time-range .van-field {
+  flex: 1;
+}
+
+/* 历史数据卡片 */
+.history-data-card {
+  background: #fff;
+  margin: 16px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.history-item {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.history-property {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.history-time {
+  font-size: 12px;
+  color: #666;
+}
+
+.history-value {
+  font-size: 14px;
+  color: #333;
+}
+
+.value-text {
+  word-break: break-all;
+}
+
+/* 表单操作按钮 */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.empty-text {
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+/* 错误状态 */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #ff4d4f;
+}
+
+.error-text {
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+/* 响应式设计 */
+@media (max-width: 375px) {
+  .main-content {
+    padding: 16px 12px;
+  }
+  
+  .device-info-card,
+  .device-control-card,
+  .properties-card,
+  .property-set-card,
+  .history-query-card,
+  .history-data-card {
+    margin: 12px 0;
+  }
+  
+  .time-range {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

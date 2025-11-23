@@ -1,0 +1,67 @@
+######################################################################
+# Build Tools
+
+.gradle
+/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+######################################################################
+# IDE
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+nbproject/private/
+build/*
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+######################################################################
+# Others
+*.log
+*.xml.versionsBackup
+*.swp
+
+!*/build/*.java
+!*/build/*.html
+!*/build/*.xml
+
+### JRebel ###
+rebel.xml
+
+application-my.yaml
+
+### Large Files ###
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+/mazongjian-ui-admin/.env.dev
+/mazongjian-ui-admin/.env.prod
+/mazongjian-server/src/main/resources/apiclient_cert.p12
+/mazongjian-server/src/main/resources/application-dev.yaml
+/mazongjian-server/src/main/resources/application-prod.yaml
+/mazongjian-module-member/src/main/resources/application-prod.yaml
+/mazongjian-module-member/mazongjian-module-member-biz/src/main/java/com/yanzu/module/member/controller/app/user/AppUserController.java
+
+
+/mazongjian-ui-app/miniprogram_npm

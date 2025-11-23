@@ -1,0 +1,197 @@
+<!-- pages/user/user.wxml -->
+<view class="container">
+  <!-- 头部标题 -->
+  <!-- 用户信息区域 -->
+  <!-- <view class="top-nav-box">
+        <view class="headerTitle" style="height:{{menuHeigth}}px;line-height: {{menuHeigth}}px; padding: {{menuTop-0}}px 0 0 0; z-index: 999; position: fixed;top:0;">
+            <view class="item">个人中心</view>
+        </view>
+    </view> -->
+  <!-- style="padding-top: {{menuHeigth+menuTop+10}}px;" -->
+  <view class="user-section">
+    <block wx:if="{{isLogin}}">
+      <button hover-class="button-click" class="user-info" bind:tap="gotosetuserinfo">
+        <view class="avatar">
+          <image src="{{userinfo.avatar?userinfo.avatar:'/logo.png'}}" mode="aspectFill"></image>
+        </view>
+        <view class="user-name">{{userinfo.nickname.length?userinfo.nickname:"用户名"}}</view>
+      </button>
+    </block>
+    <block wx:else>
+      <button hover-class="button-click" class="user-info" bindgetphonenumber="phone" open-type="getPhoneNumber">
+        <view class="avatar">
+          <image src="/logo.png" mode="aspectFill"></image>
+        </view>
+        <view class="user-name">用户名</view>
+      </button>
+    </block>
+  </view>
+  <!-- 账户余额卡片 -->
+  <view class="blue-jb" bindtap="goMemberCenter">
+    <view class="balance-card">
+      <view class="balance-header">
+        <view class="balance-icon">
+          <image src="/pages/static/icon/ye.png" mode="widthFix" style="width: 30px;"></image>
+        </view>
+        <text class="balance-title">账户余额</text>
+        <navigator class="recharge-btn" url="{{isLogin?'../recharge/recharge':'../login/login'}}" catchtap="stopPropagation">
+          <text style="font-size: 16px;">立即充值</text>
+        </navigator>
+      </view>
+      <view class="balance-amount">
+        <text class="amount">{{userinfo.balance || '0.00'}}</text>
+        <text class="currency">（余额可用门店）</text>
+      </view>
+      <view class="balance-footer">
+        <navigator class="balance-item" url="{{isLogin?'../getBalance/getBalance':'../login/login'}}" catchtap="stopPropagation">
+          <view class="coin-icon">
+            <image src="/pages/static/icon/jf.png" mode="widthFix" style="width: 30px;"></image>
+          </view>
+          <view class="balance-info">
+            <text class="balance-label">积分</text>
+            <text class="balance-value">{{userinfo.giftBalance || '0.00'}}</text>
+          </view>
+        </navigator>
+        <navigator class="balance-item" url="{{isLogin?'../coupon/coupon':'../login/login'}}" catchtap="stopPropagation">
+          <view class="ticket-icon">
+            <image src="/pages/static/icon/yh.png" mode="widthFix" style="width: 30px;"></image>
+          </view>
+          <view class="balance-info">
+            <text class="balance-label">优惠券</text>
+            <text class="balance-value">{{userinfo.couponCount || '0'}}张可用</text>
+          </view>
+        </navigator>
+      </view>
+    </view>
+  </view>
+  <view class="flex-body">
+    <!-- 常用功能 -->
+    <view class="function-section">
+      <view class="section-header">
+        <text class="section-title">常用功能</text>
+        <navigator class="more-link" url="../doorList/doorList">
+          <text>全部门店</text>
+          <van-icon name="arrow" style="margin-left:10rpx" size="16px" />
+        </navigator>
+      </view>
+      <view class="function-grid">
+        <!-- <view class="function-item" bindtap="{{isLogin?'goOrder':'gotologin'}}">
+          <view class="function-icon wifi-icon">
+            <image src="/img/wifi.png" mode="widthFix" style="width: 30px;"></image>
+          </view>
+          <text class="function-text">WIFI连接</text>
+        </view> -->
+        <!-- <view class="function-item" bindtap="goStorage">
+          <view class="function-icon store-icon">
+            <image src="/img/taiqiu.png" mode="widthFix" style="width: 25px;"></image>
+          </view>
+          <text class="function-text">存取行</text>
+        </view> -->
+        <view class="function-item" bindtap="goSignIn">
+          <view class="function-icon checkin-icon">
+            <image src="/img/qd.png" mode="widthFix" style="width: 30px;"></image>
+          </view>
+          <text class="function-text">每日签到</text>
+        </view>
+        <button class="function-item function-button" open-type="contact" bindcontact="handleContact" session-from="sessionFrom">
+          <view class="function-icon contact-icon">
+            <image src="/img/lx.png" mode="widthFix" style="width: 30px;"></image>
+          </view>
+          <text class="function-text">联系我们</text>
+        </button>
+        <!-- <view class="function-item" bindtap="{{isLogin?'call':'gotologin'}}">
+          <view class="function-icon contact-icon">
+            <image src="/img/lx.png" mode="widthFix" style="width: 30px;"></image>
+          </view>
+          <text class="function-text">联系我们</text>
+        </view> -->
+        <view class="function-item" bindtap="{{isLogin?'goTuangou':'gotologin'}}">
+          <view class="function-icon voucher-icon">
+            <image src="/img/yq.png" mode="widthFix" style="width: 30px;"></image>
+          </view>
+          <text class="function-text">验券</text>
+        </view>
+        <view class="function-item" bindtap="{{isLogin?'goFavorite':'gotologin'}}">
+          <view class="function-icon favorite-icon">
+            <image src="/img/sc.png" mode="widthFix" style="width: 30px;"></image>
+          </view>
+          <text class="function-text">收藏门店</text>
+        </view>
+
+      </view>
+    </view>
+    <!-- 管理功能区域 -->
+    <block wx:if="{{isLogin && userinfo.userType!= 11}}">
+      <view class="admin-section">
+        <view class="section-header">
+          <text class="section-title">管理功能</text>
+        </view>
+        <view class="admin-grid" wx:if="{{userinfo.userType!= 14}}">
+          <navigator class="admin-item" url="/packageA/pages/setStore/setStore">
+            <view class="admin-icon iconfont icon-mendianguanli"></view>
+            <text class="admin-text">门店管理</text>
+          </navigator>
+          <navigator class="admin-item" url="/packageA/pages/roomList/roomList">
+            <view class="admin-icon iconfont icon-wanle"></view>
+            <text class="admin-text">房间控制</text>
+          </navigator>
+          <navigator class="admin-item" url="/packageA/pages/SetOrder/SetOrder">
+            <view class="admin-icon iconfont icon-dingdan"></view>
+            <text class="admin-text">订单管理</text>
+          </navigator>
+          <navigator class="admin-item" url="/packageA/pages/setVip/setVip">
+            <view class="admin-icon iconfont icon-huiyuan"></view>
+            <text class="admin-text">会员管理</text>
+          </navigator>
+          <navigator class="admin-item" url="/packageA/pages/setCoupon/setCoupon">
+            <view class="admin-icon iconfont icon-diyongquan"></view>
+            <text class="admin-text">优惠卡券</text>
+          </navigator>
+          <navigator class="admin-item" url="/packageA/pages/scanQr/scanQr">
+            <view class="admin-icon iconfont icon-qr-code"></view>
+            <text class="admin-text">团购验券</text>
+          </navigator>
+          <navigator class="admin-item" url="/packageA/pages/admin/admin">
+            <view class="admin-icon iconfont icon-employee"></view>
+            <text class="admin-text">员工管理</text>
+          </navigator>
+          <!-- <navigator class="admin-item" url="/packageA/pages/cleaner/cleaner">
+            <view class="admin-icon iconfont icon-renyuanguanli"></view>
+            <text class="admin-text">保洁员管理</text>
+          </navigator> -->
+          <!-- <navigator class="admin-item" url="/packageA/pages/taskManager/taskManager">
+            <view class="admin-icon iconfont icon-dingdan2"></view>
+            <text class="admin-text">保洁订单</text>
+          </navigator> -->
+          <navigator class="admin-item" url="/packageA/pages/statics/statics">
+            <view class="admin-icon iconfont icon-tongji"></view>
+            <text class="admin-text">数据统计</text>
+          </navigator>
+          <navigator class="admin-item" url="/packageA/pages/packageManagement/packageManagement">
+            <view class="admin-icon iconfont icon-taocanguanli"></view>
+            <text class="admin-text">套餐管理</text>
+          </navigator>
+          <navigator class="admin-item" url="/packageA/pages/deviceList/deviceList">
+            <view class="admin-icon iconfont icon-device"></view>
+            <text class="admin-text">设备管理</text>
+          </navigator>
+        </view>
+        <view class="admin-grid" wx:else>
+          <!-- 保洁端 -->
+          <navigator class="admin-item" url="/packageA/pages/task/task">
+            <view class="admin-icon iconfont icon-renwu"></view>
+            <text class="admin-text">任务大厅</text>
+          </navigator>
+          <navigator class="admin-item" url="/packageA/pages/roomList/roomList">
+            <view class="admin-icon iconfont icon-wanle"></view>
+            <text class="admin-text">房间状态</text>
+          </navigator>
+          <navigator class="admin-item" url="/packageA/pages/taskStatics/taskStatics">
+            <view class="admin-icon iconfont icon-tongji"></view>
+            <text class="admin-text">任务统计</text>
+          </navigator>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

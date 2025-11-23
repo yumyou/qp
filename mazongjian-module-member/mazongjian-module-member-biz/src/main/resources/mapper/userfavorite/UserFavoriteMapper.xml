@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanzu.module.member.dal.mysql.userfavorite.UserFavoriteMapper">
+
+    <select id="selectStoreIdsByUserId" resultType="java.lang.Long">
+        SELECT store_id
+        FROM member_user_favorite
+        WHERE user_id = #{userId}
+          AND deleted = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByUserIdAndStoreId" resultType="com.yanzu.module.member.dal.dataobject.userfavorite.UserFavoriteDO">
+        SELECT id, user_id, store_id, create_time, update_time, creator, updater, deleted, tenant_id
+        FROM member_user_favorite
+        WHERE user_id = #{userId}
+          AND store_id = #{storeId}
+          AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <update id="deleteByUserId">
+        UPDATE member_user_favorite
+        SET deleted = 1,
+            update_time = NOW()
+        WHERE user_id = #{userId}
+          AND deleted = 0
+    </update>
+
+    <select id="selectDeletedByUserIdAndStoreId" resultType="com.yanzu.module.member.dal.dataobject.userfavorite.UserFavoriteDO">
+        SELECT id, user_id, store_id, create_time, update_time, creator, updater, deleted, tenant_id
+        FROM member_user_favorite
+        WHERE user_id = #{userId}
+          AND store_id = #{storeId}
+          AND deleted = 1
+        LIMIT 1
+    </select>
+
+    <update id="restoreById">
+        UPDATE member_user_favorite
+        SET deleted = 0,
+            update_time = NOW()
+        WHERE id = #{id}
+          AND deleted = 1
+    </update>
+
+</mapper>

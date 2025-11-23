@@ -1,0 +1,982 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "个人项目",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/device/properties": {
+      "get": {
+        "summary": "Get Device Properties",
+        "deprecated": false,
+        "description": "获取设备的属性",
+        "operationId": "get_device_properties_device_properties_get",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string",
+              "default": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PropertiesResponse"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/device/tsl": {
+      "get": {
+        "summary": "Get Device Tsl",
+        "deprecated": false,
+        "description": "获取设备的属性模板",
+        "operationId": "get_device_tsl_device_tsl_get",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string",
+              "default": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/device/property/set": {
+      "post": {
+        "summary": "Set Device Property",
+        "deprecated": false,
+        "description": "设置设备的属性",
+        "operationId": "set_device_property_device_property_set_post",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "query",
+            "description": "属性标识符",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "属性标识符",
+              "title": "Identifier"
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "属性值",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "属性值",
+              "title": "Value"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string",
+              "default": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetPropertyResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/device/status": {
+      "get": {
+        "summary": "Get Device Status",
+        "deprecated": false,
+        "description": "获取设备的连接状态",
+        "operationId": "get_device_status_device_status_get",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string",
+              "default": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/device/info": {
+      "get": {
+        "summary": "Get Device Info",
+        "deprecated": false,
+        "description": "获取设备基本信息",
+        "operationId": "get_device_info_device_info_get",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string",
+              "default": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceInfoResponse"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/devices/list": {
+      "get": {
+        "summary": "Get Devices List",
+        "deprecated": false,
+        "description": "批量获取设备的信息",
+        "operationId": "get_devices_list_devices_list_get",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "设备状态过滤条件：0(未激活)，1(在线)，3(离线)，8(禁用)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "设备状态过滤条件：0(未激活)，1(在线)，3(离线)，8(禁用)",
+              "default": 1,
+              "title": "Status"
+            }
+          },
+          {
+            "name": "current_page",
+            "in": "query",
+            "description": "当前页数",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "当前页数",
+              "default": 1,
+              "title": "Current Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "分页大小，取值范围：1~200",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "分页大小，取值范围：1~200",
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string",
+              "default": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "headers": {}
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/device/property/history": {
+      "get": {
+        "summary": "Get Property Timeline",
+        "deprecated": false,
+        "description": "获取设备属性值的历史数据",
+        "operationId": "get_property_timeline_device_property_history_get",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "query",
+            "description": "属性标识符",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "属性标识符",
+              "title": "Identifier"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "description": "起始时间戳",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "起始时间戳",
+              "title": "Start"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "description": "终止时间戳（必须大于起始时间）",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "终止时间戳（必须大于起始时间）",
+              "title": "End"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "分页查询条数，最大值为200",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "description": "分页查询条数，最大值为200",
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "ordered",
+            "in": "query",
+            "description": "查询方式：true(顺序)，false(逆序)",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "查询方式：true(顺序)，false(逆序)",
+              "default": true,
+              "title": "Ordered"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string",
+              "default": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/admin/token/info": {
+      "get": {
+        "summary": "Get Token Info",
+        "deprecated": false,
+        "description": "获取token信息（管理接口）",
+        "operationId": "get_token_info_admin_token_info_get",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string",
+              "default": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/admin/token/refresh": {
+      "post": {
+        "summary": "Refresh Token",
+        "deprecated": false,
+        "description": "强制刷新token（管理接口）",
+        "operationId": "refresh_token_admin_token_refresh_post",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string",
+              "default": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/admin/config": {
+      "get": {
+        "summary": "Get Config",
+        "deprecated": false,
+        "description": "获取配置信息（管理接口）",
+        "operationId": "get_config_admin_config_get",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string",
+              "default": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "deprecated": false,
+        "description": "健康检查",
+        "operationId": "health_check_health_get",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string",
+              "default": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DeviceInfo": {
+        "properties": {
+          "gmtModified": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gmtmodified"
+          },
+          "activeTime": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activetime"
+          },
+          "deviceKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Devicekey"
+          },
+          "gmtCreate": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gmtcreate"
+          },
+          "statusLast": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statuslast"
+          },
+          "productKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Productkey"
+          },
+          "deviceSecret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Devicesecret"
+          },
+          "iotId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iotid"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "thingType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thingtype"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "rbacTenantId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rbactenantid"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "title": "DeviceInfo"
+      },
+      "DeviceInfoResponse": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "data": {
+            "$ref": "#/components/schemas/DeviceInfo"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "data",
+          "id"
+        ],
+        "title": "DeviceInfoResponse"
+      },
+      "DeviceStatus": {
+        "properties": {
+          "status": {
+            "type": "integer",
+            "title": "Status"
+          },
+          "time": {
+            "type": "integer",
+            "title": "Time"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "time"
+        ],
+        "title": "DeviceStatus"
+      },
+      "HistoryData": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryDataItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "timestamp": {
+            "type": "integer",
+            "title": "Timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "timestamp"
+        ],
+        "title": "HistoryData"
+      },
+      "HistoryDataItem": {
+        "properties": {
+          "iotid": {
+            "type": "string",
+            "title": "Iotid"
+          },
+          "data": {
+            "title": "Data"
+          },
+          "modifytime": {
+            "type": "integer",
+            "title": "Modifytime"
+          },
+          "property": {
+            "type": "string",
+            "title": "Property"
+          },
+          "batchId": {
+            "type": "string",
+            "title": "Batchid"
+          },
+          "group": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Group"
+          },
+          "timestamp": {
+            "type": "integer",
+            "title": "Timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "iotid",
+          "data",
+          "modifytime",
+          "property",
+          "batchId",
+          "timestamp"
+        ],
+        "title": "HistoryDataItem"
+      },
+      "HistoryResponse": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "localizedMsg": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Localizedmsg"
+          },
+          "data": {
+            "$ref": "#/components/schemas/HistoryData"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "data"
+        ],
+        "title": "HistoryResponse"
+      },
+      "PropertiesResponse": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/PropertyItem"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "title": "PropertiesResponse"
+      },
+      "PropertyItem": {
+        "properties": {
+          "iotId": {
+            "type": "string",
+            "title": "Iotid"
+          },
+          "gmtModified": {
+            "type": "integer",
+            "title": "Gmtmodified"
+          },
+          "attribute": {
+            "type": "string",
+            "title": "Attribute"
+          },
+          "batchId": {
+            "type": "string",
+            "title": "Batchid"
+          },
+          "value": {
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "iotId",
+          "gmtModified",
+          "attribute",
+          "batchId",
+          "value"
+        ],
+        "title": "PropertyItem"
+      },
+      "SetPropertyResponse": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "data": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "localizedMsg": {
+            "type": "string",
+            "title": "Localizedmsg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "localizedMsg"
+        ],
+        "title": "SetPropertyResponse"
+      },
+      "StatusResponse": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "data": {
+            "$ref": "#/components/schemas/DeviceStatus"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "data",
+          "id"
+        ],
+        "title": "StatusResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "van-calendar": "@vant/weapp/calendar/index"
+  },
+  "navigationBarBackgroundColor": "#07c160"
+}

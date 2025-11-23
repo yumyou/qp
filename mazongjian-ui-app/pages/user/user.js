@@ -1,0 +1,295 @@
+// pages/user/user.js
+var http = require('../../utils/http');
+var util1 = require('../../utils/util.js');
+const app = getApp()
+
+Page({
+
+  /**
+   * 页面的初始数据
+   */
+  data: {
+    isLogin:app.globalData.isLogin,
+    sysinfo: '',
+    userinfo:{
+      couponCount:0,
+      giftBalance:0,
+      balance:0
+    },//用户信息
+  },
+
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+    this.getSysInfo();
+  },
+
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+    let that = this;
+    that.setData({
+      isLogin:app.globalData.isLogin,
+    })
+
+    if(!app.globalData.isLogin){
+      that.setData({
+        couponCount:0,
+        giftBalance:0,
+        balance:0
+      })
+    }
+    that.getuserinfo();
+  },
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+
+  },
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: function () {
+
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage: function () {
+
+  },
+  phone:function(e){
+    //console.log("授权用户手机号");
+    var that = this;
+    if(e.detail.errMsg=="getPhoneNumber:fail user deny"){
+      wx.showToast({title: '已取消授权'})
+    }
+    if(e.detail.errMsg=="getPhoneNumber:ok"){
+      //console.log('手机号码授权+++++++');
+      //console.log(e.detail);
+      //console.log('手机号码授权+++++++');
+      wx.login({
+        success: function(res) {
+            //console.log('111++++==');
+            //console.log(res);
+            //console.log('111++++==');
+            if (res.code != null) {
+              http.request(
+                "/member/auth/weixin-mini-app-login",
+                "1",
+                "post", {
+                  "phoneCode": e.detail.code,
+                  "loginCode": res.code
+                },
+                "",
+                "获取中...",
+                function success(info) {
+                  console.info('返回111===');
+                  console.info(info);
+                  if (info.code == 0) {
+                      if(info.data){
+                        app.globalData.userDatatoken = info.data;
+                        app.globalData.isLogin=true;
+                        that.setData({
+                          isLogin:true,
+                        })
+                        //缓存服务器返回的用户信息
+                        wx.setStorageSync("userDatatoken", info.data)
+                        that.getuserinfo()
+                      }
+                  }
+                },
+                function fail(info) {
+                  
+                }
+              )
+            } else {
+              //console.log('登录失败！' + res.errMsg)
+            }
+          }
+        })
+    }
+  },
+  getuserinfo:function(){
+    var that = this;
+    if (app.globalData.isLogin) {
+      http.request(
+        "/member/user/get",
+        "1",
+        "get", {
+        },
+        app.globalData.userDatatoken.accessToken,
+        "",
+        function success(info) {
+          console.info('我的信息===');
+          console.info(info);
+          if (info.code == 0) {
+            that.setData({
+              userinfo:info.data,
+            })
+          }
+        },
+        function fail(info) {
+          
+        }
+      )
+    } else {
+      //console.log('未登录失败！')
+    }
+  },
+  goTuangou:function(){
+    wx.navigateTo({
+      url: '../tuangou/tuangou',
+    })
+  },
+  goStorage:function(){
+    wx.navigateTo({
+      url: '../storage/storage',
+    })
+  },
+  goSignIn:function(){
+    wx.navigateTo({
+      url: '../signIn/signIn',
+    })
+  },
+  call:function () {
+    let that = this;
+    var phoneLength=that.data.doorinfodata.kefuPhone.length;
+    if(phoneLength>0){
+      if(phoneLength==11){
+          wx.makePhoneCall({
+            phoneNumber:that.data.doorinfodata.kefuPhone,
+            success:function () {
+              //console.log("拨打电话成功！")
+            },
+            fail:function () {
+              //console.log("拨打电话失败！")
+            }
+          })
+      }else{
+        wx.showModal({
+          title: '提示',
+          content: '客服上班时间10：00~23：00\r\n如您遇到问题，建议先查看“使用帮助”！\r\n本店客服微信号：'+that.data.doorinfodata.kefuPhone,
+          confirmText: '复制',
+          complete: (res) => {
+            if (res.confirm) {
+              wx.setClipboardData({
+                data: that.data.doorinfodata.kefuPhone,
+                success: function (res) {
+                    wx.showToast({ title: '微信号已复制到剪贴板！' })
+                }
+              })
+            } else if (res.cancel) {
+              //console.log('用户点击取消')
+            }
+          }
+        })
+      }
+    }
+  },
+  getSysInfo:function(){
+    var that = this;
+    http.request(
+      "/member/index/getSysInfo",
+      "1",
+      "get", {
+      },
+      "",
+      "",
+      function success(info) {
+        console.info(info);
+        if (info.code == 0) {
+          that.setData({
+            sysinfo:info.data,
+          })
+        }
+      },
+      function fail(info) {
+        
+      }
+    )
+  },
+  gotosetuserinfo:function(){
+    wx.navigateTo({
+      url: '../setUserInfo/setUserInfo',
+    })
+  },
+  goOrder:function(){
+    wx.switchTab({
+      url: '../orderList/orderList',
+    })
+  },
+  // 跳转到收藏门店页面
+  goFavorite: function() {
+    if (!app.globalData.isLogin) {
+      wx.navigateTo({
+        url: '../login/login',
+      });
+      return;
+    }
+    wx.navigateTo({
+      url: '../favorite/favorite',
+    });
+  },
+  //到登录界面
+  gotologin(){
+    wx.navigateTo({
+      url: '../login/login',
+    })
+  },
+  // 跳转到会员中心
+  goMemberCenter: function() {
+    if (!app.globalData.isLogin) {
+      wx.navigateTo({
+        url: '../login/login',
+      });
+      return;
+    }
+    wx.navigateTo({
+      url: '../memberCenter/memberCenter',
+    });
+  },
+  // 跳转到物联网设备管理
+  goIotDevice: function() {
+    if (!app.globalData.isLogin) {
+      wx.navigateTo({
+        url: '../login/login',
+      });
+      return;
+    }
+    wx.navigateTo({
+      url: '../iotDevice/iotDevice',
+    });
+  },
+  // 阻止事件冒泡
+  stopPropagation: function(e) {
+    // 阻止事件冒泡，防止触发父元素的点击事件
+  },
+})

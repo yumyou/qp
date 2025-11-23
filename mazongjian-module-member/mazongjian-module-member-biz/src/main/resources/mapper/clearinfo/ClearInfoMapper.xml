@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanzu.module.member.dal.mysql.clearinfo.ClearInfoMapper">
+    <update id="cancelByRoomId">
+        update member_clear_info
+        set status=4,
+            complaint_desc='已不需要清洁，订单取消'
+        where deleted = 0
+          and room_id = #{roomId}
+          and create_time &lt; now()
+          and status in (0, 1, 2)
+
+    </update>
+    <update id="cancelByRoomIds">
+        update member_clear_info
+        set status=4,
+            complaint_desc='房间已开始新订单，不需要清洁，订单取消'
+        where deleted = 0
+          and room_id in (${roomIds})
+          and create_time &lt; now()
+          and status in (0, 1, 2)
+    </update>
+    <update id="settlementByIds">
+        update
+        member_clear_info
+        set status=6,settlement_time=now()
+        where clear_id IN
+        <foreach collection="collection" open="(" separator="," close=")" index="index" item="item">
+            #{item}
+        </foreach>
+    </update>
+    <update id="cancelById">
+        update
+            member_clear_info
+        set status=0,
+            user_id=null
+        where clear_id = #{clearId}
+    </update>
+    <!--
+        一般情况下，尽可能使用 Mapper 进行 CRUD 增删改查即可。
+        无法满足的场景，例如说多表关联查询，才使用 XML 编写 SQL。
+        代码生成器暂时只生成 Mapper XML 文件本身，更多推荐 MybatisX 快速开发插件来生成查询。
+        文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
+     -->
+
+    <select id="getByUserIdAndStatusAndStoreIds"
+            resultType="com.yanzu.module.member.dal.dataobject.clearinfo.ClearInfoDO">
+        select *
+        from member_clear_info
+        where deleted = 0
+          and user_id = #{userId}
+          and status = #{status}
+          and store_id in (${storeIds})
+
+    </select>
+    <select id="getByUserIdAndStatusAndStoreId"
+            resultType="com.yanzu.module.member.dal.dataobject.clearinfo.ClearInfoDO">
+        select *
+        from member_clear_info
+        where deleted = 0
+          and user_id = #{userId}
+          and status = #{status}
+          and store_id = #{storeId}
+    </select>
+    <select id="getDetail" resultType="com.yanzu.module.member.controller.app.clear.vo.AppClearInfoRespVO">
+        select c.*, s.store_name, r.room_name, r.type roomType, su.name userName, o.end_time orderEndTime
+        from member_clear_info c
+                 left join member_store_info s on c.store_id = s.store_id
+                 left join member_room_info r ON r.room_id = c.room_id
+                 left join member_order_info o ON c.order_id = o.order_id
+                 left join member_store_user su ON su.store_id = c.store_id and su.user_id = c.user_id and su.deleted=0
+        where c.clear_id = #{clearId}
+    </select>
+    <select id="countByUserIdAndStatus" resultType="java.lang.Integer">
+        select count(1)
+        from member_clear_info
+        where deleted = 0
+        and user_id = #{userId}
+        and status = #{status}
+        <choose>
+            <when test="type==1">and to_days(create_time)=to_days(#{dateStr})</when>
+            <when test="type==2">and DATE_FORMAT(create_time, '%Y-%m')=DATE_FORMAT(#{dateStr}, '%Y-%m')</when>
+        </choose>
+    </select>
+    <select id="getClearManagerPage"
+            resultType="com.yanzu.module.member.controller.app.clear.vo.AppClearPageRespVO">
+        select
+        c.clear_id,
+        o.order_id,
+        o.order_no,
+        o.store_id,
+        s.store_name,
+        o.room_id,
+        r.room_name,
+        su.name userName,
+        r.type roomType,
+        o.end_time orderEndTime,
+        c.status,
+        c.start_time,
+        c.finish_time
+        from member_clear_info c
+        left join member_store_info s ON s.store_id = c.store_id
+        left join member_order_info o ON c.order_id = o.order_id
+        left join member_room_info r ON r.room_id = o.room_id
+        left join member_store_user su ON su.store_id=c.store_id and su.user_id=c.user_id and su.deleted=0
+        where o.deleted = 0 AND c.deleted = 0 and o.status !=3 and c.store_id in (${reqVO.storeIds})
+        <if test="null!=reqVO.storeId and reqVO.storeId!=''">
+            and o.store_id=#{reqVO.storeId}
+        </if>
+        <if test="null!=reqVO.userId and reqVO.userId!=''">
+            and c.user_id=#{reqVO.userId}
+        </if>
+        <if test="null!=reqVO.startTime and null!=reqVO.endTime">
+            and to_days(c.create_time) >= to_days(#{reqVO.startTime})
+            and to_days(c.create_time) &lt;= to_days(#{reqVO.endTime})
+        </if>
+        <if test="null!=reqVO.status">
+            and c.status=#{reqVO.status}
+            <if test="reqVO.status==0">
+                and c.user_id is null
+            </if>
+        </if>
+        order by c.create_time desc
+    </select>
+    <select id="countCurrentByRoomId" resultType="java.lang.Integer">
+        select count(1)
+        from member_clear_info
+        where deleted = 0
+          and room_id = #{roomId}
+          and status IN (0, 1, 2)
+    </select>
+    <select id="getSettlementList" resultType="java.lang.Long">
+        select clear_id
+        from member_clear_info
+        where deleted = 0
+        AND store_id = #{storeId}
+        AND user_id = #{userId}
+        AND status = 3
+        <if test="null!=startTime and null!=endTime">
+            and to_days(create_time) >= to_days(#{startTime})
+            and to_days(create_time) &lt;= to_days(#{endTime})
+        </if>
+    </select>
+    <select id="getCurrent" resultType="com.yanzu.module.member.dal.dataobject.clearinfo.ClearInfoDO">
+        select *
+        from member_clear_info
+        where deleted = 0
+          and user_id = #{userId}
+          and room_id = #{roomId}
+          and status IN (1,2)
+        order by create_time desc
+        limit 1
+    </select>
+</mapper>
