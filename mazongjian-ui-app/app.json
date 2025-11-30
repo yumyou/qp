@@ -1,0 +1,115 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/login/login",
+    "pages/user/user",
+    "pages/orderList/orderList",
+    "pages/doorList/doorList",
+    "pages/door/door",
+    "pages/doorDetail/doorDetail",
+    "pages/doorSelect/doorSelect",
+    "pages/doorSubmit/doorSubmit",
+    "pages/booking/booking",
+    "pages/placeOrder/placeOrder",
+    "pages/orderDetail/orderDetail",
+    "pages/orderSubmit/orderSubmit",
+    "pages/coupon/coupon",
+    "pages/favorite/favorite",
+    "pages/memberCenter/memberCenter",
+    "pages/myBalance/myBalance",
+    "pages/getBalance/getBalance",
+    "pages/recharge/recharge",
+    "pages/cashOut/cashOut",
+    "pages/changeDoor/changeDoor",
+    "pages/selectDoor/selectDoor",
+    "pages/location/location",
+    "pages/tencentMap/tencentMap",
+    "pages/help/help",
+    "pages/join/join",
+    "pages/signIn/signIn",
+    "pages/storage/storage",
+    "pages/roomRenew/roomRenew",
+    "pages/setUserInfo/setUserInfo",
+    "pages/setUserName/setUserName",
+    "pages/setUserPhone/setUserPhone",
+    "pages/tuangou/tuangou",
+    "pages/iotDevice/iotDevice",
+    "pages/iotDeviceManage/iotDeviceOperation"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "麻将",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f4f4f4",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#3cc51f",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "pages/static/icon/home.png",
+        "selectedIconPath": "pages/static/icon/home-in.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/orderList/orderList",
+        "iconPath": "pages/static/icon/dd.png",
+        "selectedIconPath": "pages/static/icon/dd-in.png",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "iconPath": "pages/static/icon/my.png",
+        "selectedIconPath": "pages/static/icon/my-in.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "subPackages": [
+    {
+      "root": "packageA",
+      "pages": [
+        "pages/addLock/addLock",
+        "pages/admin/admin",
+        "pages/cleaner/cleaner",
+        "pages/deviceList/deviceList",
+        "pages/editPages/editPages",
+        "pages/faceBlacklist/faceBlacklist",
+        "pages/faceRecord/faceRecord",
+        "pages/mapSelector/mapSelector",
+        "pages/packageManagement/packageManagement",
+        "pages/roomList/roomList",
+        "pages/scanQr/scanQr",
+        "pages/setCoupon/setCoupon",
+        "pages/setCouponInfo/setCouponInfo",
+        "pages/setDiscount/setDiscount",
+        "pages/setDoorInfo/setDoorInfo",
+        "pages/setDoorList/setDoorList",
+        "pages/SetOrder/SetOrder",
+        "pages/setStore/setStore",
+        "pages/setStoreInfo/setStoreInfo",
+        "pages/setStoreSound/setStoreSound",
+        "pages/setVip/setVip",
+        "pages/statics/statics",
+        "pages/task/task",
+        "pages/taskDetail/taskDetail",
+        "pages/taskManager/taskManager",
+        "pages/taskSettle/taskSettle",
+        "pages/taskStatics/taskStatics"
+      ]
+    }
+  ],
+  "preloadRule": {},
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "debug": false,
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

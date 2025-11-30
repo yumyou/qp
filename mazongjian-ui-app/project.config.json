@@ -38,7 +38,14 @@
       "outputPath": ""
     },
     "ignoreUploadUnusedFiles": true,
-    "useStaticServer": false
+    "useStaticServer": false,
+    "compileWorklet": false,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
   "condition": {},
@@ -55,5 +62,7 @@
     ],
     "include": []
   },
-  "appid": "wx76787717222e2a86"
+  "appid": "wx76787717222e2a86",
+  "libVersion": "3.10.3",
+  "simulatorPluginLibVersion": {}
 }

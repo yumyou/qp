@@ -9,7 +9,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    appName: app.globalData.appName,
+    appName: (app && app.globalData) ? app.globalData.appName : '麻将',
     statusBarHeight: '',
     titleBarHeight: '',
     option1: [

@@ -1,4 +1,4 @@
-// pages/doorList/doorList.js
+// pages/index/index.js
 const app = getApp();
 var http = require('../../utils/http');
 var util1 = require('../../utils/util.js');
@@ -19,7 +19,7 @@ Page({
     storeList:[],//门店数组
     filteredStoreList:[],//筛选后的门店数组
     currentFilter: 'billiards',//当前筛选类型
-    isLogin: app.globalData.isLogin,
+    isLogin: (app && app.globalData) ? app.globalData.isLogin : false,
     popshow: false,
     wifiShow: false,
     simpleModel: '',//简洁模式

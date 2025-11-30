@@ -9,7 +9,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    isLogin:app.globalData.isLogin,
+    isLogin: (app && app.globalData) ? app.globalData.isLogin : false,
     sysinfo: '',
     userinfo:{
       couponCount:0,
